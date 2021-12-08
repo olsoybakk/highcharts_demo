@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import * as Highcharts from "highcharts";
+import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'app-root',
@@ -15,14 +15,36 @@ export class AppComponent {
       {
         type: "line",
         data: []
+      },
+      {
+        type: "line",
+        data: []
+      },
+      {
+        type: "line",
+        data: []
+      },
+      {
+        type: "line",
+        data: []
+      },
+      {
+        type: "line",
+        data: []
+      },
+      {
+        type: "line",
+        data: []
       }
     ]
   };
 
   ngOnInit(): void {
-    fetch('./assets/23.json')
-    .then(response => response.json())
-    .then(data => {
+    fetch('https://thingproxy.freeboard.io/fetch/https://www.nordpoolgroup.com/api/marketdata/chart/23?currency=NOK')
+    .then(response => response.text())
+    .then(d => {
+      // console.log('d', typeof d, d.length);
+      let data = JSON.parse(d);
       // console.log('data', data);
       // console.log(data.data.Rows.forEach((row: any, i: number) => console.log(i,row.Columns)));
       // console.log(this.chartOptions);
@@ -57,7 +79,7 @@ export class AppComponent {
           zoomType: 'x'
         },
         title: {
-          text: 'Nordpool data'
+          text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
         },
         xAxis: {
           type: 'datetime',
@@ -71,7 +93,7 @@ export class AppComponent {
         },
         yAxis: {
             title: {
-                text: 'Electric rate'
+                text: `Electric rate (${data.data.Units})`
             },
             min: 0
         },
@@ -82,10 +104,12 @@ export class AppComponent {
             }
           }
         },
-        colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
-        series: [series[3]]
+        // colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
+        // series: [series[3]]
+        series: series
       };
       this.chartOptions = options;
+
     });
   }
 }
