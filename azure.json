@@ -1,0 +1,12 @@
+{
+  "hosting": [
+    {
+      "app": {
+        "project": "highcharts_demo",
+        "target": "build",
+        "configuration": "production",
+        "path": "dist/highcharts_demo"
+      }
+    }
+  ]
+}
