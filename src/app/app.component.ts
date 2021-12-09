@@ -18,12 +18,13 @@ export class AppComponent {
 
   title = 'Highcharts demo';
   Highcharts: typeof Highcharts = Highcharts;
+  HighchartsExtra: typeof Highcharts = Highcharts;
 
-  createDummySeries(): any[] {
+  createDummySeries(type: string): any[] {
     const dummyseries: any[] = [];
     for (let i = 0; i < 6; i++) {
       dummyseries.push({
-        type: 'line',
+        type: type,
         name: '',
         visible: false
       });
@@ -44,12 +45,48 @@ export class AppComponent {
         text: ''
       }
     },
-    series: this.createDummySeries()
+    series: this.createDummySeries('line')
+  };
+  
+  chartOptionsExtra: Highcharts.Options = {
+    title: {
+      text: 'Nordpool data - harvesting data...'
+    },
+    xAxis: {
+      type: 'category',
+      labels: {
+          rotation: -45,
+          style: {
+              fontSize: '13px',
+              fontFamily: 'Verdana, sans-serif'
+          }
+      }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Population (millions)'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    // series: this.createDummySeries('column')
+    series: [{
+      type: 'column',
+      data: [
+        {name: '', x: 1},
+        {name: '', x: 2},
+        {name: '', x: 3},
+        {name: '', x: 4},
+        {name: '', x: 5},
+        {name: '', x: 6}
+      ]
+    }]
   };
 
   ngOnInit(): void {
     const url = 'https://www.nordpoolgroup.com/api/marketdata/chart/23?currency=NOK';
-
     this.appService.getData('assets/23.json')
     .subscribe(data => {
       this.fillChart(data);
@@ -88,6 +125,7 @@ export class AppComponent {
     });
     // console.log('values', values);
     const series: any[] = [];
+    const seriesExtra: any[] = [];
     for (let key in values) {
       // console.log(key);
       // console.log(key, values[key]);
@@ -97,8 +135,10 @@ export class AppComponent {
         visible: key === 'Tr.heim' || key === 'Oslo',
         data: values[key].sort((a:any[],b:any[]) => a[0] - b[0])
       });
+      seriesExtra.push([key, Math.round(values[key].reduce((sum: number, x: number[]) => sum + x[1], 0) / values[key].length)]);
     }
     // console.log('series', series);
+    // console.log('seriesExtra', seriesExtra);
 
     let options: Highcharts.Options = {
       chart: {
@@ -135,6 +175,39 @@ export class AppComponent {
       // series: [series[3]]
       series: series
     };
+    let optionsExtra: Highcharts.Options = {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
+      },
+      xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45,
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Average rate (øre/kWh)'
+          }
+      },
+      legend: {
+          enabled: false
+      },
+      series: [{
+        type: 'column',
+        // name: 'Average price',
+        data: seriesExtra
+      }]
+    };
     this.chartOptions = options;
+    this.chartOptionsExtra = optionsExtra;
   }
 }
