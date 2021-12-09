@@ -121,6 +121,7 @@ export class AppComponent {
     data.data.Rows.forEach((row: any, i: number) => {
       if (startTime === undefined) startTime = row.StartTime;
       let dateRow = (new Date(row.StartTime)).getTime();
+      dateRow += 2 * 1000 * 3600; // convert to UTC+2
       // let dateRow = row.StartTime;
       row.Columns.forEach((column: any, j: number) => {
         if (values[column.Name] === undefined) values[column.Name] = [];
