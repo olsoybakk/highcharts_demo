@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import * as Highcharts from 'highcharts';
+import { AppService } from './app.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -7,9 +9,27 @@ import * as Highcharts from 'highcharts';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
+  appService: AppService;
+  
+  constructor(appService: AppService) {
+    this.appService = appService;
+  }
+
   title = 'Highcharts demo';
   Highcharts: typeof Highcharts = Highcharts;
 
+  createDummySeries(): any[] {
+    const dummyseries: any[] = [];
+    for (let i = 0; i < 6; i++) {
+      dummyseries.push({
+        type: 'line',
+        name: '',
+        visible: false
+      });
+    }
+    return dummyseries;
+  }
   chartOptions: Highcharts.Options = {
     title: {
       text: 'Nordpool data - harvesting data...'
@@ -24,61 +44,32 @@ export class AppComponent {
         text: ''
       }
     },
-    series: [
-      {
-        type: "line",
-        name: '',
-        visible: false,
-        // data: []
-      },
-      {
-        type: "line",
-        name: '',
-        visible: false,
-        // data: []
-      },
-      {
-        type: "line",
-        name: '',
-        visible: false,
-        // data: []
-      },
-      {
-        type: "line",
-        name: '',
-        visible: false,
-        // data: []
-      },
-      {
-        type: "line",
-        name: '',
-        visible: false,
-        data: []
-      },
-      {
-        type: "line",
-        name: '',
-        visible: false,
-        // data: []
-      }
-    ]
+    series: this.createDummySeries()
   };
 
   ngOnInit(): void {
-    fetch('assets/23.json')
-    .then(response => response.text())
-    .then(d => {
-      this.fillChart(d);
-      fetch('https://thingproxy.freeboard.io/fetch/https://www.nordpoolgroup.com/api/marketdata/chart/23?currency=NOK')
-      .then(response => response.text())
-      .then(d => this.fillChart(d))
-      .catch((err) => console.log(err));
+    const url = 'https://www.nordpoolgroup.com/api/marketdata/chart/23?currency=NOK';
+
+    this.appService.getData('assets/23.json')
+    .subscribe(data => {
+      this.fillChart(data);
+      this.appService.getData(url)
+      .subscribe(data => {
+        if (data) {
+          this.fillChart(data);
+        } else {
+          this.appService.getData(`https://thingproxy.freeboard.io/fetch/${url}`)
+          .subscribe(data => {
+            if (data) this.fillChart(data);
+          });
+        }
+      });
     });
   }
 
   fillChart(d: string): void {
     // console.log('d', typeof d, d.length, d);
-    let data = JSON.parse(d);
+    let data = typeof d === 'object' ? d : JSON.parse(d);
     // console.log('data', data);
     // console.log(data.data.Rows.forEach((row: any, i: number) => console.log(i,row.Columns)));
     // console.log(this.chartOptions);
@@ -90,7 +81,7 @@ export class AppComponent {
       // let dateRow = row.StartTime;
       row.Columns.forEach((column: any, j: number) => {
         if (values[column.Name] === undefined) values[column.Name] = [];
-        let value = Math.round(100*parseFloat(column.Value.replace(' ', '').replace(',', '.')) * 1.25 / 1000)/100;
+        let value = Math.round(parseFloat(column.Value.replace(' ', '').replace(',', '.')) * 1.25 / 10);// /100;
         // values[column.Name].unshift([dateRow, value]);
         values[column.Name].push([dateRow, value]);
       });
@@ -103,7 +94,7 @@ export class AppComponent {
       series.push({
         name: key,
         type: 'line',
-        visible: key === 'Tr.heim',
+        visible: key === 'Tr.heim' || key === 'Oslo',
         data: values[key].sort((a:any[],b:any[]) => a[0] - b[0])
       });
     }
@@ -127,11 +118,11 @@ export class AppComponent {
         }
       },
       yAxis: {
-          title: {
-              // text: `Electric rate (${data.data.Units})`
-              text: `Electric rate (NOK/kWh)`
-          },
-          min: 0
+        title: {
+          // text: `Electric rate (${data.data.Units})`
+          text: `Electric rate (øre/kWh)`
+        },
+        min: 0
       },
       plotOptions: {
         series: {
