@@ -45,6 +45,9 @@ export class AppComponent {
         text: ''
       }
     },
+    tooltip: {
+      pointFormat: 'Electric rate: <b>{point.y} øre</b>'
+    },
     series: this.createDummySeries('line')
   };
   
@@ -65,11 +68,14 @@ export class AppComponent {
     yAxis: {
         min: 0,
         title: {
-            text: 'Population (millions)'
+            text: ''
         }
     },
     legend: {
         enabled: false
+    },
+    tooltip: {
+      pointFormat: 'Average electric rate: <b>{point.y} øre</b>'
     },
     // series: this.createDummySeries('column')
     series: [{
@@ -173,6 +179,9 @@ export class AppComponent {
       },
       // colors: ['#6CF', '#39F', '#06C', '#036', '#000', '#F00'],
       // series: [series[3]]
+      tooltip: {
+        pointFormat: 'Electric rate: <b>{point.y} øre</b>'
+      },
       series: series
     };
     let optionsExtra: Highcharts.Options = {
@@ -180,7 +189,8 @@ export class AppComponent {
         type: 'column'
       },
       title: {
-        text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
+        // text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
+        text: ''
       },
       xAxis: {
         type: 'category',
@@ -201,9 +211,26 @@ export class AppComponent {
       legend: {
           enabled: false
       },
+      tooltip: {
+        pointFormat: 'Average electric rate: <b>{point.y} øre</b>'
+      },
       series: [{
         type: 'column',
         // name: 'Average price',
+        colorByPoint: true,
+        dataLabels: {
+          enabled: true,
+          rotation: -90,
+          color: '#FFFFFF',
+          align: 'right',
+          // format: '{point.y:.0f}', // one decimal
+          format: '{point.y} øre',
+          y: 10, // 10 pixels down from the top
+          style: {
+              fontSize: '13px',
+              fontFamily: 'Verdana, sans-serif'
+          }
+        },
         data: seriesExtra
       }]
     };
