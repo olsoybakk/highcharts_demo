@@ -2,15 +2,11 @@
 <highcharts-chart [Highcharts]="HighchartsExtra" [options]="chartOptionsExtra"></highcharts-chart>
 <div>
     &nbsp;
-    <button mat-raised-button (click)="showstep(-1)" title="show data from -1">&lt;&lt;</button>
-    &nbsp;
-    <button mat-raised-button (click)="showdate(-1)" title="show data from yesterday">yesterday</button>
+    <button mat-raised-button (click)="showstep(-1)" title="show data from -1">&lt;</button>
     &nbsp;
     <button mat-raised-button (click)="showdate(0)" title="show data from today">today</button>
     &nbsp;
-    <button mat-raised-button (click)="showdate(1)" title="show data from tomorrow">tomorrow</button>
-    &nbsp;
-    <button mat-raised-button (click)="showstep(1)" title="show data from +1">&gt;&gt;</button>
+    <button mat-raised-button (click)="showstep(1)" title="show data from +1">&gt;</button>
     &nbsp;
     <button mat-raised-button (click)="showall()" title="show data from dataset">show all</button>
 </div>

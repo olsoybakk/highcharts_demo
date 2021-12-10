@@ -21,7 +21,9 @@ export class AppComponent {
     this.appService = appService;
     this.resizeObservable$ = fromEvent(window, 'resize')
     this.resizeSubscription$ = this.resizeObservable$.subscribe(() => {
-      this.fillChart(this.chartData);
+      setTimeout(() => {
+        this.fillChart(this.chartData);
+      }, 500);
     });
   }
 
@@ -100,16 +102,23 @@ export class AppComponent {
     }]
   };
 
-  getDateValue(d: Date): number {
-    if (!d) return -1;
-    let stringValue = `${d.getFullYear()}${d.getMonth()}${d.getDate()}`;
-    return parseInt(stringValue);
+  getStringWithLeadingZero(value: number): string {
+    return `${value}`.padStart(2, '0');
+  }
+
+  getDateValueString(d: Date, separator: string = ''): string {
+    if (!d) return '';
+    return `${d.getFullYear()}${separator}${this.getStringWithLeadingZero(d.getMonth() + 1)}${separator}${this.getStringWithLeadingZero(d.getDate())}`;
   }
   
-  getDateValueWithHour(d: Date): number {
+  getDateValue(d: Date): number {
     if (!d) return -1;
-    let stringValue = `${d.getFullYear()}${d.getMonth()}${d.getDate()}${d.getHours()}`;
-    return parseInt(stringValue);
+    return parseInt(`${d.getFullYear()}${d.getMonth() + 1}${d.getDate()}`);
+  }
+  
+  getDateValueWithHour(d: Date, separator: string = ''): number {
+    if (!d) return -1;
+    return parseInt(`${d.getFullYear()}${separator}${d.getMonth() + 1}${separator}${d.getDate()}${separator}${d.getHours()}`);
   }
 
   ngOnInit(): void {
@@ -181,14 +190,19 @@ export class AppComponent {
     // console.log(this.chartOptions);
     const values: any = {};
     let startTime: Date;
+    let minDate: Date = new Date((new Date).getFullYear() + 1, 1);
+    let maxDate: Date = new Date((new Date).getFullYear() - 1, 1);
     data.data.Rows.forEach((row: any, i: number) => {
       let skip = false;
       if (startTime === undefined) startTime = row.StartTime;
+      const theTime = new Date(row.StartTime);
       if (this.fillDate >= 0) {
-        if ((new Date(row.StartTime).getDate() !== this.fillDate)) skip = true;
+        if ((theTime.getDate() !== this.fillDate)) skip = true;
       }
       if (!skip) {
-        let dateRow = (new Date(row.StartTime)).getTime();
+        if (minDate === undefined || minDate > theTime) minDate = theTime;
+        if (maxDate === undefined || maxDate < theTime) maxDate = theTime;
+        let dateRow = (theTime).getTime();
         dateRow += 2 * 1000 * 3600; // convert to UTC+2
         // let dateRow = row.StartTime;
         row.Columns.forEach((column: any, j: number) => {
@@ -216,6 +230,10 @@ export class AppComponent {
     // console.log('series', series);
     // console.log('seriesExtra', seriesExtra);
 
+    const dateValue = minDate.getDate() === maxDate.getDate()
+      ? `${this.getDateValueString(minDate, '-')}`
+      : `${this.getDateValueString(minDate, '-')} / ${this.getDateValueString(maxDate, '-')}`;
+
     let options: Highcharts.Options = {
       chart: {
         zoomType: 'x',
@@ -223,7 +241,8 @@ export class AppComponent {
         width: window.innerWidth
       },
       title: {
-        text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
+        // text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
+        text: `Nordpool data (${dateValue})`
       },
       xAxis: {
         type: 'datetime',
