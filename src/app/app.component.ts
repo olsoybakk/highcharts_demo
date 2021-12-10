@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { AppService } from './app.service';
 import { map } from 'rxjs/operators';
+import { fromEvent, Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +11,18 @@ import { map } from 'rxjs/operators';
 })
 export class AppComponent {
 
+  fillDate: number = -1;
+  chartData: any;
   appService: AppService;
+  resizeObservable$: Observable<Event>;
+  resizeSubscription$: Subscription
   
   constructor(appService: AppService) {
     this.appService = appService;
+    this.resizeObservable$ = fromEvent(window, 'resize')
+    this.resizeSubscription$ = this.resizeObservable$.subscribe(() => {
+      this.fillChart(this.chartData);
+    });
   }
 
   title = 'Highcharts demo';
@@ -91,44 +100,104 @@ export class AppComponent {
     }]
   };
 
+  getDateValue(d: Date): number {
+    if (!d) return -1;
+    let stringValue = `${d.getFullYear()}${d.getMonth()}${d.getDate()}`;
+    return parseInt(stringValue);
+  }
+  
+  getDateValueWithHour(d: Date): number {
+    if (!d) return -1;
+    let stringValue = `${d.getFullYear()}${d.getMonth()}${d.getDate()}${d.getHours()}`;
+    return parseInt(stringValue);
+  }
+
   ngOnInit(): void {
-    const url = 'https://www.nordpoolgroup.com/api/marketdata/chart/23?currency=NOK';
-    this.appService.getData('assets/23.json')
-    .subscribe(data => {
-      this.fillChart(data);
-      this.appService.getData(url)
-      .subscribe(data => {
-        if (data) {
-          this.fillChart(data);
-        } else {
-          this.appService.getData(`https://thingproxy.freeboard.io/fetch/${url}`)
-          .subscribe(data => {
-            if (data) this.fillChart(data);
-          });
+    this.fillDate = (new Date()).getDate();
+    const storageDatetime = localStorage.getItem('datetime');
+    const storageDataString = localStorage.getItem('data');
+    if (storageDataString && storageDatetime) {
+      let storageData = JSON.parse(storageDataString);
+      const storagetime = new Date(storageDatetime);
+      const now = new Date();
+      const storageDateEnddate = new Date(storageData.data.DataEnddate);
+      // console.log('data date', this.getDateValue(storageDateEnddate));
+      if (this.getDateValue(storageDateEnddate) <= this.getDateValue(now) + 1) {
+        if (now.getUTCHours() > 11) {
+          if ((storagetime.getTime() + 30*60*1000) < now.getTime()) {
+            storageData = null;
+          }
         }
-      });
+      }
+      if (storageData) {
+        this.fillChart(storageData);
+        return;
+      }
+    }
+
+    const proxyUrl = 'https://proxy20211210131237.azurewebsites.net/proxy/get/?url=';
+    const url = 'https://www.nordpoolgroup.com/api/marketdata/chart/23?currency=NOK';
+    this.appService.getData(`${proxyUrl}${encodeURIComponent(url)}`)
+    .subscribe(data => {
+      if (data) {
+        this.fillChart(data);
+      } else {
+        this.appService.getData('assets/23.json')
+        .subscribe(data => {
+          if (data) this.fillChart(data);
+        });
+      }
     });
   }
 
-  fillChart(d: string): void {
+  showall(): void {
+    this.fillDate = -1;
+    this.fillChart(this.chartData);
+  }
+
+  showstep(step: number): void {
+    this.fillDate += step;
+    this.fillChart(this.chartData);
+  }
+
+  showdate(value: number): void {
+    const now = new Date();
+    this.fillDate = (new Date(now.setDate(now.getDate() + value))).getDate();
+    this.fillChart(this.chartData);
+  }
+
+  fillChart(d: any): void {
     // console.log('d', typeof d, d.length, d);
     let data = typeof d === 'object' ? d : JSON.parse(d);
+    if (typeof d === 'object' && d.result) data = JSON.parse(d.result);
+
+    localStorage.setItem('datetime', (new Date()).toUTCString());
+    localStorage.setItem('data', JSON.stringify(data));
+
+    this.chartData = data;
+
     // console.log('data', data);
     // console.log(data.data.Rows.forEach((row: any, i: number) => console.log(i,row.Columns)));
     // console.log(this.chartOptions);
     const values: any = {};
     let startTime: Date;
     data.data.Rows.forEach((row: any, i: number) => {
+      let skip = false;
       if (startTime === undefined) startTime = row.StartTime;
-      let dateRow = (new Date(row.StartTime)).getTime();
-      dateRow += 2 * 1000 * 3600; // convert to UTC+2
-      // let dateRow = row.StartTime;
-      row.Columns.forEach((column: any, j: number) => {
-        if (values[column.Name] === undefined) values[column.Name] = [];
-        let value = Math.round(parseFloat(column.Value.replace(' ', '').replace(',', '.')) * 1.25 / 10);// /100;
-        // values[column.Name].unshift([dateRow, value]);
-        values[column.Name].push([dateRow, value]);
-      });
+      if (this.fillDate >= 0) {
+        if ((new Date(row.StartTime).getDate() !== this.fillDate)) skip = true;
+      }
+      if (!skip) {
+        let dateRow = (new Date(row.StartTime)).getTime();
+        dateRow += 2 * 1000 * 3600; // convert to UTC+2
+        // let dateRow = row.StartTime;
+        row.Columns.forEach((column: any, j: number) => {
+          if (values[column.Name] === undefined) values[column.Name] = [];
+          let value = Math.round(parseFloat(column.Value.replace(' ', '').replace(',', '.')) * 1.25 / 10);// /100;
+          // values[column.Name].unshift([dateRow, value]);
+          values[column.Name].push([dateRow, value]);
+        });
+      }
     });
     // console.log('values', values);
     const series: any[] = [];
@@ -149,7 +218,9 @@ export class AppComponent {
 
     let options: Highcharts.Options = {
       chart: {
-        zoomType: 'x'
+        zoomType: 'x',
+        height: Math.round(window.innerHeight * 5 / 8),
+        width: window.innerWidth
       },
       title: {
         text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
@@ -187,7 +258,9 @@ export class AppComponent {
     };
     let optionsExtra: Highcharts.Options = {
       chart: {
-        type: 'column'
+        type: 'column',
+        height: Math.round(window.innerHeight / 4),
+        width: window.innerWidth
       },
       title: {
         // text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`

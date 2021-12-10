@@ -1,6 +1,6 @@
 const config = {
-    'buildDate': '2021.12.09',
-    'buildTime': '11:25'
+    'buildDate': '2021.12.10',
+    'buildTime': '18:00'
 };
 
 export default config;
