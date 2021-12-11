@@ -15,7 +15,15 @@ export class AppComponent {
   chartData: any;
   appService: AppService;
   resizeObservable$: Observable<Event>;
-  resizeSubscription$: Subscription
+  resizeSubscription$: Subscription;
+  areaState: any = {
+    // 'Oslo': true,
+    // 'Kr.Sand': false,
+    // 'Bergen': false,
+    // 'Tr.heim': true,
+    // 'Molde': false,
+    // 'Tromsø': false
+  };
   
   constructor(appService: AppService) {
     this.appService = appService;
@@ -125,6 +133,8 @@ export class AppComponent {
     this.fillDate = (new Date()).getDate();
     const storageDatetime = localStorage.getItem('datetime');
     const storageDataString = localStorage.getItem('data');
+    const areaState = localStorage.getItem('areastate');
+    if (areaState) this.areaState = JSON.parse(areaState);
     if (storageDataString && storageDatetime) {
       let storageData = JSON.parse(storageDataString);
       const storagetime = new Date(storageDatetime);
@@ -132,8 +142,9 @@ export class AppComponent {
       const storageDateEnddate = new Date(storageData.data.DataEnddate);
       // console.log('data date', this.getDateValue(storageDateEnddate));
       if (this.getDateValue(storageDateEnddate) <= this.getDateValue(now) + 1) {
-        if (now.getUTCHours() > 11) {
-          if ((storagetime.getTime() + 30*60*1000) < now.getTime()) {
+        if (now.getUTCHours() > 10) {
+          // if ((storagetime.getTime() + 30*60*1000) < now.getTime()) {
+          if ((storagetime.getTime() + 15*60*1000) < now.getTime()) {
             storageData = null;
           }
         }
@@ -203,27 +214,40 @@ export class AppComponent {
         if (minDate === undefined || minDate > theTime) minDate = theTime;
         if (maxDate === undefined || maxDate < theTime) maxDate = theTime;
         let dateRow = (theTime).getTime();
-        dateRow += 2 * 1000 * 3600; // convert to UTC+2
-        // let dateRow = row.StartTime;
+        dateRow += 1 * 1000 * 3600; // convert to UTC+1
         row.Columns.forEach((column: any, j: number) => {
           if (values[column.Name] === undefined) values[column.Name] = [];
-          let value = Math.round(parseFloat(column.Value.replace(' ', '').replace(',', '.')) * 1.25 / 10);// /100;
-          // values[column.Name].unshift([dateRow, value]);
+          let value = Math.round(parseFloat(column.Value.replace(' ', '').replace(',', '.')) * 1.25) / 10;
           values[column.Name].push([dateRow, value]);
+          values[column.Name].push([dateRow + 1000 * 3599, value]);
         });
       }
     });
     // console.log('values', values);
     const series: any[] = [];
     const seriesExtra: any[] = [];
+    const self = this;
     for (let key in values) {
+      let visible = key === 'Tr.heim' || key === 'Oslo';
+      if (this.areaState.hasOwnProperty(key)) {
+        visible = this.areaState[key];
+      } else {
+        this.areaState[key] = visible;
+      }
       // console.log(key);
       // console.log(key, values[key]);
       series.push({
         name: key,
         type: 'line',
-        visible: key === 'Tr.heim' || key === 'Oslo',
-        data: values[key].sort((a:any[],b:any[]) => a[0] - b[0])
+        visible: visible,
+        data: values[key].sort((a:any[],b:any[]) => a[0] - b[0]),
+        events: {
+          legendItemClick: () => {
+            //console.log(key, self.areaState[key]);
+            self.areaState[key] = !self.areaState[key];
+            localStorage.setItem('areastate', JSON.stringify(self.areaState));
+          }
+        }
       });
       seriesExtra.push([key, Math.round(values[key].reduce((sum: number, x: number[]) => sum + x[1], 0) / values[key].length)]);
     }
@@ -252,14 +276,21 @@ export class AppComponent {
         },
         title: {
             text: 'Date'
-        }
+        },
+        plotLines: [{
+          color: '#FF0000',
+          // dashStyle: 'LongDash',
+          dashStyle: 'LongDash',
+          width: 1,
+          value: (new Date()).getTime() + 1000*3600
+        }]
       },
       yAxis: {
         title: {
           // text: `Electric rate (${data.data.Units})`
           text: `Electric rate (øre/kWh)`
         },
-        min: 0
+        // min: minValue
       },
       plotOptions: {
         series: {
