@@ -203,6 +203,8 @@ export class AppComponent {
     let startTime: Date;
     let minDate: Date = new Date((new Date).getFullYear() + 1, 1);
     let maxDate: Date = new Date((new Date).getFullYear() - 1, 1);
+    let current: any = {};
+    const now = new Date();
     data.data.Rows.forEach((row: any, i: number) => {
       let skip = false;
       if (startTime === undefined) startTime = row.StartTime;
@@ -216,14 +218,23 @@ export class AppComponent {
         let dateRow = (theTime).getTime();
         dateRow += 1 * 1000 * 3600; // convert to UTC+1
         row.Columns.forEach((column: any, j: number) => {
+          if (current[column.Name] === undefined) current[column.Name] = 0;
           if (values[column.Name] === undefined) values[column.Name] = [];
           let value = Math.round(parseFloat(column.Value.replace(' ', '').replace(',', '.')) * 1.25) / 10;
           values[column.Name].push([dateRow, value]);
           values[column.Name].push([dateRow + 1000 * 3599, value]);
+          if (current[column.Name] === 0
+            && now > theTime
+            && now.getDate() === theTime.getDate()
+            && now.getHours() === theTime.getHours()
+            && (now.getTime() + 1000 * 3599) > theTime.getTime()) {
+            current[column.Name] = value;
+          }
         });
       }
     });
     // console.log('values', values);
+    // console.log('current', current);
     const series: any[] = [];
     const seriesExtra: any[] = [];
     const self = this;
@@ -297,6 +308,27 @@ export class AppComponent {
           marker: {
               enabled: false
           }
+        }
+      },
+      legend: {
+        layout: 'vertical',
+        align: 'left',
+        floating: true,
+        verticalAlign: 'top',
+        x: 60,
+        y: 45,
+        borderColor: 'rgba(100,100,100,0.5)',
+        borderWidth: 1,
+        padding: 10,
+        margin: 50,
+        itemMarginTop: 5,
+        itemMarginBottom: 5,
+        //backgroundColor: '#FFFFFF'
+        backgroundColor: 'rgba(255,255,255,0.8)',
+        labelFormatter: function () {
+          let label = this.name;
+          if (current[this.name] > 0) label += ` (${current[this.name]} øre/kWh)`;
+          return label;
         }
       },
       // colors: ['#6CF', '#39F', '#06C', '#036', '#000', '#F00'],
