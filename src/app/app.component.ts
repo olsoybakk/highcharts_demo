@@ -266,8 +266,8 @@ export class AppComponent {
     // console.log('seriesExtra', seriesExtra);
 
     const dateValue = minDate.getDate() === maxDate.getDate()
-      ? `${this.getDateValueString(minDate, '-')}`
-      : `${this.getDateValueString(minDate, '-')} / ${this.getDateValueString(maxDate, '-')}`;
+      ? `${this.getDateValueString(minDate, '.')}`
+      : `${this.getDateValueString(minDate, '.')} - ${this.getDateValueString(maxDate, '.')}`;
 
     let options: Highcharts.Options = {
       chart: {
@@ -311,22 +311,24 @@ export class AppComponent {
         }
       },
       legend: {
-        layout: 'vertical',
-        align: 'left',
-        floating: true,
-        verticalAlign: 'top',
-        x: 60,
-        y: 45,
-        borderColor: 'rgba(100,100,100,0.5)',
-        borderWidth: 1,
-        padding: 10,
-        margin: 50,
-        itemMarginTop: 5,
-        itemMarginBottom: 5,
-        //backgroundColor: '#FFFFFF'
-        backgroundColor: 'rgba(255,255,255,0.8)',
+        // layout: 'vertical',
+        // align: 'left',
+        // floating: true,
+        // verticalAlign: 'top',
+        // x: 60,
+        // y: 45,
+        // borderColor: 'rgba(100,100,100,0.5)',
+        // borderWidth: 1,
+        // padding: 10,
+        // margin: 50,
+        // itemMarginTop: 5,
+        // itemMarginBottom: 5,
+        // //backgroundColor: '#FFFFFF'
+        // backgroundColor: 'rgba(255,255,255,0.8)',
+        // useHTML: true,
         labelFormatter: function () {
           let label = this.name;
+          // if (current[this.name] > 0) label = `<div style=\'display:flex;width:160px\'><div style=\'width:35%\'>${label}</div><div style=\'width:65%;text-align:right;\'>(${current[this.name]} øre/kWh)</div></div>`;
           if (current[this.name] > 0) label += ` (${current[this.name]} øre/kWh)`;
           return label;
         }
