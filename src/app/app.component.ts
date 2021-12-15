@@ -12,6 +12,8 @@ import { fromEvent, Observable, Subscription } from 'rxjs';
 export class AppComponent {
 
   fillDate: number = -1;
+  minDate: Date | undefined;
+  maxDate: Date | undefined;
   chartData: any;
   appService: AppService;
   resizeObservable$: Observable<Event>;
@@ -175,15 +177,34 @@ export class AppComponent {
     this.fillChart(this.chartData);
   }
 
-  showstep(step: number): void {
+  step(step: number): void {
+    if (this.isDisabled(step)) return;
     this.fillDate += step;
     this.fillChart(this.chartData);
   }
 
-  showdate(value: number): void {
+  setdate(value: number): void {
     const now = new Date();
     this.fillDate = (new Date(now.setDate(now.getDate() + value))).getDate();
     this.fillChart(this.chartData);
+  }
+
+  isDisabled(step: number): boolean {
+    let minDate = this.minDate;
+    let maxDate = this.maxDate;
+    let dateval = (new Date()).setDate(this.fillDate);
+    dateval += step * 24 * 3600 * 1000;
+    const validateDate = new Date(dateval);
+    if (step > 0) {
+      if (maxDate && maxDate.getDate() < validateDate.getDate()) {
+        if (maxDate.getMonth() <= validateDate.getMonth()) return true;
+      }
+    } else {
+      if (minDate && minDate.getDate() > validateDate.getDate()) {
+        if (minDate.getMonth() >= validateDate.getMonth()) return true;
+      }
+    }
+    return false;
   }
 
   fillChart(d: any): void {
@@ -212,6 +233,8 @@ export class AppComponent {
       if (this.fillDate >= 0) {
         if ((theTime.getDate() !== this.fillDate)) skip = true;
       }
+      if (this.minDate === undefined || this.minDate > theTime) this.minDate = theTime;
+      if (this.maxDate === undefined || this.maxDate < theTime) this.maxDate = theTime;
       if (!skip) {
         if (minDate === undefined || minDate > theTime) minDate = theTime;
         if (maxDate === undefined || maxDate < theTime) maxDate = theTime;

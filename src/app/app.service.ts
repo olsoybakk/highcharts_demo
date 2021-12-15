@@ -11,7 +11,8 @@ export class AppService {
   constructor(private http: HttpClient) { }
 
   getData(url: string) {
-    return this.http.get<any>(url, { headers: { mode: 'no-cors', 'Access-Control-Allow-Origin': '*' } }).pipe(
+    // return this.http.get<any>(url, { headers: { mode: 'no-cors', 'Access-Control-Allow-Origin': '*' } }).pipe(
+    return this.http.get<any>(url).pipe(
       catchError(() => {
         return of(null);
       }),
