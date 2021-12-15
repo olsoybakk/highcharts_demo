@@ -189,6 +189,11 @@ export class AppComponent {
     this.fillChart(this.chartData);
   }
 
+  isToday(): boolean {
+    const now = new Date();
+    return now.getDate() == (new Date((new Date()).setDate(this.fillDate))).getDate();
+  }
+
   isDisabled(step: number): boolean {
     if (this.fillDate === -1) return true;
     let minDate = this.minDate;
