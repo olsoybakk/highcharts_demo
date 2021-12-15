@@ -190,6 +190,7 @@ export class AppComponent {
   }
 
   isDisabled(step: number): boolean {
+    if (this.fillDate === -1) return true;
     let minDate = this.minDate;
     let maxDate = this.maxDate;
     let dateval = (new Date()).setDate(this.fillDate);
