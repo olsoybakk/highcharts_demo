@@ -120,7 +120,8 @@ export class AppComponent {
 
   getDateValueString(d: Date, separator: string = ''): string {
     if (!d) return '';
-    return `${d.getFullYear()}${separator}${this.getStringWithLeadingZero(d.getMonth() + 1)}${separator}${this.getStringWithLeadingZero(d.getDate())}`;
+    // return `${d.getFullYear()}${separator}${this.getStringWithLeadingZero(d.getMonth() + 1)}${separator}${this.getStringWithLeadingZero(d.getDate())}`;
+    return moment(d).format('L');
   }
   
   getDateValue(d: Date): number {
