@@ -3,6 +3,7 @@ import * as Highcharts from 'highcharts';
 import { AppService } from './app.service';
 import { map } from 'rxjs/operators';
 import { fromEvent, Observable, Subscription } from 'rxjs';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,7 @@ import { fromEvent, Observable, Subscription } from 'rxjs';
 })
 export class AppComponent {
 
+  valueFormat: string = 'øre/kWh'
   fillDate: number = -1;
   minDate: Date | undefined;
   maxDate: Date | undefined;
@@ -54,7 +56,7 @@ export class AppComponent {
   }
   chartOptions: Highcharts.Options = {
     title: {
-      text: 'Nordpool data - harvesting data...'
+      text: 'Nordpool - henter data...'
     },
     xAxis: {
       title: {
@@ -67,14 +69,14 @@ export class AppComponent {
       }
     },
     tooltip: {
-      pointFormat: 'Electric rate: <b>{point.y} øre</b>'
+      pointFormat: `Snittpris: <b>{point.y} ${this.valueFormat}</b>`
     },
     series: this.createDummySeries('line')
   };
   
   chartOptionsExtra: Highcharts.Options = {
     title: {
-      text: 'Nordpool data - harvesting data...'
+      text: 'Nordpool - henter data...'
     },
     xAxis: {
       type: 'category',
@@ -96,7 +98,7 @@ export class AppComponent {
         enabled: false
     },
     tooltip: {
-      pointFormat: 'Average electric rate: <b>{point.y} øre</b>'
+      pointFormat: `Snittpris: <b>{point.y} ${this.valueFormat}</b>`
     },
     // series: this.createDummySeries('column')
     series: [{
@@ -132,6 +134,7 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
+    moment.locale('nb')
     this.fillDate = (new Date()).getDate();
     const storageDatetime = localStorage.getItem('datetime');
     const storageDataString = localStorage.getItem('data');
@@ -203,11 +206,13 @@ export class AppComponent {
     const validateDate = new Date(dateval);
     if (step > 0) {
       if (maxDate && maxDate.getDate() < validateDate.getDate()) {
-        if (maxDate.getMonth() <= validateDate.getMonth()) return true;
+        if (maxDate.getMonth() <= validateDate.getMonth())
+          if (maxDate.getMonth() <= validateDate.getMonth()) return true;
       }
     } else {
       if (minDate && minDate.getDate() > validateDate.getDate()) {
-        if (minDate.getMonth() >= validateDate.getMonth()) return true;
+        if (minDate.getMonth() >= validateDate.getMonth())
+          if (minDate.getFullYear() >= validateDate.getFullYear()) return true;
       }
     }
     return false;
@@ -251,7 +256,7 @@ export class AppComponent {
           if (values[column.Name] === undefined) values[column.Name] = [];
           let value = Math.round(parseFloat(column.Value.replace(' ', '').replace(',', '.')) * 1.25) / 10;
           values[column.Name].push([dateRow, value]);
-          values[column.Name].push([dateRow + 1000 * 3599, value]);
+          values[column.Name].push([dateRow + (1000 * 3600) - 1, value]);
           if (current[column.Name] === 0
             && now > theTime
             && now.getDate() === theTime.getDate()
@@ -305,8 +310,8 @@ export class AppComponent {
         width: window.innerWidth
       },
       title: {
-        // text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
-        text: `Nordpool data (${dateValue})`
+        // text: `Nordpool strømpriser - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
+        text: `Nordpool strømpriser (${dateValue})`
       },
       xAxis: {
         type: 'datetime',
@@ -315,7 +320,7 @@ export class AppComponent {
           year: '%Y'
         },
         title: {
-            text: 'Date'
+          text: 'Dato'
         },
         plotLines: [{
           color: '#FF0000',
@@ -328,7 +333,7 @@ export class AppComponent {
       yAxis: {
         title: {
           // text: `Electric rate (${data.data.Units})`
-          text: `Electric rate (øre/kWh)`
+          text: `Strømpris (${this.valueFormat})`
         },
         // min: minValue
       },
@@ -357,15 +362,17 @@ export class AppComponent {
         // useHTML: true,
         labelFormatter: function () {
           let label = this.name;
-          // if (current[this.name] > 0) label = `<div style=\'display:flex;width:160px\'><div style=\'width:35%\'>${label}</div><div style=\'width:65%;text-align:right;\'>(${current[this.name]} øre/kWh)</div></div>`;
-          if (current[this.name] > 0) label += ` (${current[this.name]} øre/kWh)`;
+          if (current[this.name] > 0) label += ` (${current[this.name]} ${self.valueFormat})`;
           return label;
         }
       },
       // colors: ['#6CF', '#39F', '#06C', '#036', '#000', '#F00'],
       // series: [series[3]]
       tooltip: {
-        pointFormat: 'Electric rate: <b>{point.y} øre</b>'
+        formatter: function () {
+          // console.log(this);
+          return `<span style='font-size: 10px;'>${moment(this.x - 1000 * 3600).format('LLLL')}</span><br/><span style='color: ${this.color};'>●</span> ${this.series.name}: <b>${Highcharts.numberFormat(this.y, 2)} ${self.valueFormat}</b>`;
+        }
       },
       series: series
     };
@@ -376,7 +383,7 @@ export class AppComponent {
         width: window.innerWidth
       },
       title: {
-        // text: `Nordpool data - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
+        // text: `Nordpool strømpriser - ${data.header.title} ${(new Date(data.data.LatestResultDate)).toLocaleString()}`
         text: ''
       },
       xAxis: {
@@ -392,14 +399,14 @@ export class AppComponent {
       yAxis: {
           min: 0,
           title: {
-              text: 'Average rate (øre/kWh)'
+              text: `Snittpris (${this.valueFormat})`
           }
       },
       legend: {
           enabled: false
       },
       tooltip: {
-        pointFormat: 'Average electric rate: <b>{point.y} øre</b>'
+        pointFormat: `Snittpris: <b>{point.y} ${this.valueFormat}</b>`
       },
       series: [{
         type: 'column',
@@ -411,7 +418,7 @@ export class AppComponent {
           color: '#FFFFFF',
           align: 'right',
           // format: '{point.y:.0f}', // one decimal
-          format: '{point.y} øre',
+          format: `{point.y} ${this.valueFormat}`,
           y: 10, // 10 pixels down from the top
           style: {
               fontSize: '13px',

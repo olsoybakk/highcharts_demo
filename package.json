@@ -28,6 +28,7 @@
     "@types/ol": "^6.5.3",
     "highcharts": "^9.3.2",
     "highcharts-angular": "^3.0.0",
+    "moment": "^2.29.1",
     "ol": "^6.9.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.1",
