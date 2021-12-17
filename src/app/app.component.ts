@@ -255,7 +255,11 @@ export class AppComponent {
         row.Columns.forEach((column: any, j: number) => {
           if (current[column.Name] === undefined) current[column.Name] = 0;
           if (values[column.Name] === undefined) values[column.Name] = [];
-          let value = Math.round(parseFloat(column.Value.replace(' ', '').replace(',', '.')) * 1.25) / 10;
+          let tax = 1.25;
+          if (column.Name == 'Tromsø') {
+            tax = 1.0;
+          }
+          let value = Math.round(parseFloat(column.Value.replace(' ', '').replace(',', '.')) * tax) / 10;
           values[column.Name].push([dateRow, value]);
           values[column.Name].push([dateRow + (1000 * 3600) - 1, value]);
           if (current[column.Name] === 0
@@ -274,7 +278,7 @@ export class AppComponent {
     const seriesExtra: any[] = [];
     const self = this;
     for (let key in values) {
-      let visible = key === 'Tr.heim' || key === 'Oslo';
+      let visible = key === 'Tr.heim' || key === 'Oslo' || key === 'Tromsø';
       if (this.areaState.hasOwnProperty(key)) {
         visible = this.areaState[key];
       } else {
@@ -295,7 +299,7 @@ export class AppComponent {
           }
         }
       });
-      seriesExtra.push([key, Math.round(values[key].reduce((sum: number, x: number[]) => sum + x[1], 0) / values[key].length)]);
+      seriesExtra.push([key, Math.round(100 * values[key].reduce((sum: number, x: number[]) => sum + x[1], 0) / values[key].length) / 100]);
     }
     // console.log('series', series);
     // console.log('seriesExtra', seriesExtra);
@@ -372,7 +376,21 @@ export class AppComponent {
       tooltip: {
         formatter: function () {
           // console.log(this);
-          return `<span style='font-size: 10px;'>${moment(this.x - 1000 * 3600).format('LLLL')}</span><br/><span style='color: ${this.color};'>●</span> ${this.series.name}: <b>${Highcharts.numberFormat(this.y, 2)} ${self.valueFormat}</b>`;
+          const datas: Highcharts.Point[][] = [];
+          this.series.chart.series.forEach(s => datas.push(s.data.filter(e => e.series.visible && `${e.category}` === `${this.key}`)));
+          let tooltip = `<span style='font-size: 10px;'>${moment(this.x - 1000 * 3600).format('LLLL')}</span>`;
+          tooltip += `<br/>`;
+          let seriestooltip = '';
+          // console.log('datas', datas);
+          datas.forEach(c => c.forEach(d => {
+            if (seriestooltip.length > 0) seriestooltip += '<br/>';
+            seriestooltip += `<span style='color: ${d.color};'>●</span>`;
+            if (this.colorIndex === d.colorIndex) seriestooltip += `&nbsp;<b>${d.series.name}:</b>&nbsp;`;
+            else seriestooltip += `&nbsp;${d.series.name}:&nbsp;`;
+            seriestooltip += `<b>${Highcharts.numberFormat(d.y || 0, 1)} ${self.valueFormat}</b>`;
+          }));
+          tooltip += seriestooltip;
+          return tooltip;
         }
       },
       series: series
