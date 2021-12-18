@@ -117,6 +117,7 @@ export class AppComponent {
 
   datepicked(event: MatDatepickerInputEvent<Date>): void {
     if (event.value) {
+      this.datepickerDate = event.value;
       this.fillDate = event.value.getDate();
       this.fillChart(this.chartData);
     }
@@ -265,6 +266,7 @@ export class AppComponent {
   step(step: number): void {
     if (this.isDisabled(step)) return;
     if (!this.datepickerDate) return;
+    // console.log('step', step, this.datepickerDate);
     this.datepickerDate = new Date(this.datepickerDate.setDate(this.datepickerDate.getDate() + step));
     // this.fillDate += step;
     this.fillDate = (this.datepickerDate).getDate();
@@ -273,6 +275,7 @@ export class AppComponent {
 
   setdate(value: number): void {
     const now = new Date();
+    // console.log('setdate', value, this.datepickerDate);
     this.datepickerDate = new Date(now.setDate(now.getDate() + value));
     this.fillDate = (this.datepickerDate).getDate();
     this.fillChart(this.chartData);
