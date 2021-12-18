@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import * as Highcharts from 'highcharts';
 import { AppService } from './app.service';
 import { map } from 'rxjs/operators';
 import { fromEvent, Observable, Subscription } from 'rxjs';
 import * as moment from 'moment';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +15,7 @@ import * as moment from 'moment';
 export class AppComponent {
 
   valueFormat: string = 'øre/kWh'
+  datepickerDate: Date | undefined;
   fillDate: number = -1;
   minDate: Date | undefined;
   maxDate: Date | undefined;
@@ -30,6 +33,75 @@ export class AppComponent {
   };
   
   constructor(appService: AppService) {
+
+    Highcharts.setOptions({
+      chart: {
+        backgroundColor: '#212121',
+        borderColor: '#EEEEEE'
+      },
+      credits: {
+        enabled: false
+      },
+      legend: {
+        itemHiddenStyle: {
+          color: '#999999',
+        },
+        itemHoverStyle: {
+          color: '#EEEEEE'
+        },
+        itemStyle: {
+          color: '#BBBBBB'
+        }
+      },
+      plotOptions: {
+        line: {
+          states: {
+            inactive: {
+              opacity: 0.7
+            }
+          },
+          marker: {
+            // lineColor: '#BBBBBB'
+          }
+        }
+      },
+      title: {
+        style: {
+          color: '#BBBBBB'
+        }
+      },
+      xAxis: {
+        labels: {
+          style: {
+            color: '#BBBBBB'
+          }
+        },
+        title: {
+          style: {
+            color: '#BBBBBB'
+          }
+        }
+      },
+      yAxis: {
+        labels: {
+          style: {
+            color: '#BBBBBB'
+          }
+        },
+        title: {
+          style: {
+            color: '#BBBBBB'
+          }
+        }
+      }
+    });
+    // console.log('theme', Highcharts.getOptions());
+
+
+    // const currentYear = new Date().getFullYear();
+    // this.minDate = new Date(currentYear - 20, 0, 1);
+    // this.maxDate = new Date(currentYear + 1, 11, 31);
+
     this.appService = appService;
     this.resizeObservable$ = fromEvent(window, 'resize')
     this.resizeSubscription$ = this.resizeObservable$.subscribe(() => {
@@ -42,6 +114,13 @@ export class AppComponent {
   title = 'Highcharts demo';
   Highcharts: typeof Highcharts = Highcharts;
   HighchartsExtra: typeof Highcharts = Highcharts;
+
+  datepicked(event: MatDatepickerInputEvent<Date>): void {
+    if (event.value) {
+      this.fillDate = event.value.getDate();
+      this.fillChart(this.chartData);
+    }
+  }
 
   createDummySeries(type: string): any[] {
     const dummyseries: any[] = [];
@@ -136,7 +215,8 @@ export class AppComponent {
 
   ngOnInit(): void {
     moment.locale('nb')
-    this.fillDate = (new Date()).getDate();
+    this.datepickerDate = new Date();
+    this.fillDate = this.datepickerDate.getDate();
     const storageDatetime = localStorage.getItem('datetime');
     const storageDataString = localStorage.getItem('data');
     const areaState = localStorage.getItem('areastate');
@@ -178,18 +258,23 @@ export class AppComponent {
 
   showall(): void {
     this.fillDate = -1;
+    this.datepickerDate = undefined;
     this.fillChart(this.chartData);
   }
 
   step(step: number): void {
     if (this.isDisabled(step)) return;
-    this.fillDate += step;
+    if (!this.datepickerDate) return;
+    this.datepickerDate = new Date(this.datepickerDate.setDate(this.datepickerDate.getDate() + step));
+    // this.fillDate += step;
+    this.fillDate = (this.datepickerDate).getDate();
     this.fillChart(this.chartData);
   }
 
   setdate(value: number): void {
     const now = new Date();
-    this.fillDate = (new Date(now.setDate(now.getDate() + value))).getDate();
+    this.datepickerDate = new Date(now.setDate(now.getDate() + value));
+    this.fillDate = (this.datepickerDate).getDate();
     this.fillChart(this.chartData);
   }
 
@@ -339,8 +424,7 @@ export class AppComponent {
         title: {
           // text: `Electric rate (${data.data.Units})`
           text: `Strømpris (${this.valueFormat})`
-        },
-        // min: minValue
+        }
       },
       plotOptions: {
         series: {

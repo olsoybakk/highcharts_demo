@@ -1,12 +1,17 @@
 <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptions"></highcharts-chart>
 <highcharts-chart [Highcharts]="HighchartsExtra" [options]="chartOptionsExtra"></highcharts-chart>
 <div style="text-align: center;">
-    &nbsp;
-    <button mat-raised-button (click)="step(-1)" [disabled]="isDisabled(-1)" title="Gå en dag tilbake">&lt;</button>
-    &nbsp;
-    <button mat-raised-button (click)="setdate(0)" [disabled]="isToday()" title="Vis data fra i dag">I dag</button>
-    &nbsp;
-    <button mat-raised-button (click)="step(1)" [disabled]="isDisabled(1)" title="Gå en dag fram">&gt;</button>
-    &nbsp;
-    <button mat-raised-button (click)="showall()" [disabled]="fillDate === -1" title="Vis hele perioden">Vis hele perioden</button>
+  &nbsp;
+  <button mat-raised-button (click)="step(-1)" [disabled]="isDisabled(-1)" title="Gå en dag tilbake">&lt;</button>
+  &nbsp;
+  <button mat-raised-button (click)="setdate(0)" [disabled]="isToday()" title="Vis data fra i dag">I dag</button>
+  &nbsp;
+  <button mat-raised-button (click)="step(1)" [disabled]="isDisabled(1)" title="Gå en dag fram">&gt;</button>
+  &nbsp;
+  <button mat-raised-button (click)="showall()" [disabled]="fillDate === -1" title="Vis hele perioden">Vis hele perioden</button>
+  <div style="display: unset;"> 
+    <input style="display: none;" class="form-control" matInput [min]="minDate" [max]="maxDate" [value]="datepickerDate" [matDatepicker]="picker" (dateInput)="datepicked($event)">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker touchUi #picker></mat-datepicker>
+  </div>
 </div>
