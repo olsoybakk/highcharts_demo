@@ -39,6 +39,28 @@ export class AppComponent {
         backgroundColor: '#212121',
         borderColor: '#EEEEEE'
       },
+      colors: [
+        // '#7cb5ec',
+        // '#434348',
+        // '#90ed7d',
+        // '#f7a35c',
+        // '#8085e9',
+        // '#f15c80',
+        // '#e4d354',
+        // '#2b908f',
+        // '#f45b5b',
+        // '#91e8e1'
+        '#7cb5ec',
+        '#e4d354', // '#434348',
+        '#90ed7d',
+        '#f7a35c',
+        '#8085e9',
+        '#f15c80',
+        // '#e4d354',
+        '#2b908f',
+        '#f45b5b',
+        '#91e8e1'
+      ],
       credits: {
         enabled: false
       },
@@ -97,7 +119,6 @@ export class AppComponent {
     });
     // console.log('theme', Highcharts.getOptions());
 
-
     // const currentYear = new Date().getFullYear();
     // this.minDate = new Date(currentYear - 20, 0, 1);
     // this.maxDate = new Date(currentYear + 1, 11, 31);
@@ -116,11 +137,10 @@ export class AppComponent {
   HighchartsExtra: typeof Highcharts = Highcharts;
 
   datepicked(event: MatDatepickerInputEvent<Date>): void {
-    if (event.value) {
-      this.datepickerDate = event.value;
-      this.fillDate = event.value.getDate();
-      this.fillChart(this.chartData);
-    }
+    if (!event.value) return;
+    this.datepickerDate = event.value;
+    this.fillDate = event.value.getDate();
+    this.fillChart(this.chartData);
   }
 
   createDummySeries(type: string): any[] {
@@ -461,20 +481,30 @@ export class AppComponent {
       // colors: ['#6CF', '#39F', '#06C', '#036', '#000', '#F00'],
       // series: [series[3]]
       tooltip: {
+        useHTML: true,
         formatter: function () {
           // console.log(this);
           const datas: Highcharts.Point[][] = [];
           this.series.chart.series.forEach(s => datas.push(s.data.filter(e => e.series.visible && `${e.category}` === `${this.key}`)));
-          let tooltip = `<span style='font-size: 10px;'>${moment(this.x - 1000 * 3600).format('LLLL')}</span>`;
-          tooltip += `<br/>`;
+          let tooltip = `<div style='font-size: 10px;'>${moment(this.x - 1000 * 3600).format('LLLL')}</div>`;
+          // tooltip += `<br/>`;
           let seriestooltip = '';
           // console.log('datas', datas);
           datas.forEach(c => c.forEach(d => {
-            if (seriestooltip.length > 0) seriestooltip += '<br/>';
+            // if (seriestooltip.length > 0) seriestooltip += '<br/>';
+            seriestooltip += '<div>';
+            seriestooltip += `<div style='display: inline-flex; width: 160px;'>`;
+            seriestooltip += `<div style='width: 65px; border: red 1px;'>`;
+            // seriestooltip += `<div style='width: 150px;'>`;
             seriestooltip += `<span style='color: ${d.color};'>●</span>`;
             if (this.colorIndex === d.colorIndex) seriestooltip += `&nbsp;<b>${d.series.name}:</b>&nbsp;`;
             else seriestooltip += `&nbsp;${d.series.name}:&nbsp;`;
+            seriestooltip += '</div>';
+            seriestooltip += `<div style='text-align: right; width: 195px; border: red 1px;'>`;
             seriestooltip += `<b>${Highcharts.numberFormat(d.y || 0, 1)} ${self.valueFormat}</b>`;
+            seriestooltip += '</div>';
+            seriestooltip += '</div>';
+            seriestooltip += '</div>';
           }));
           tooltip += seriestooltip;
           return tooltip;

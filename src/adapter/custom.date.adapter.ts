@@ -1,4 +1,4 @@
-import { Injectable, Inject, LOCALE_ID, PLATFORM_ID } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { NativeDateAdapter } from '@angular/material/core';
 
 @Injectable()
