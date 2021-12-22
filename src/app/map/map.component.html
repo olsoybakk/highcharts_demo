@@ -1,0 +1,41 @@
+<div class="mapButton">
+    <button mat-icon-button (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
+    <br/>
+    <button mat-icon-button (click)="zoomOut()"><mat-icon>zoom_out</mat-icon></button>
+    <br/>
+    <br/>
+    <button mat-icon-button (click)="gotoHome()"><mat-icon>home</mat-icon></button>
+    <br/>
+    <button mat-icon-button (click)="geoloc()"><mat-icon>place</mat-icon></button>
+    <br/>
+    <button mat-icon-button (click)="toggleButtons()"><mat-icon>settings</mat-icon></button>
+    <!-- <button mat-mini-fab (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
+    <br/>
+    <button mat-mini-fab (click)="zoomOut()"><mat-icon>zoom_out</mat-icon></button>
+    <br/>
+    <br/>
+    <button mat-mini-fab (click)="gotoHome()"><mat-icon>home</mat-icon></button>
+    <br/>
+    <button mat-mini-fab (click)="geoloc()"><mat-icon>place</mat-icon></button>
+    <br/>
+    <button mat-mini-fab (click)="toggleButtons()"><mat-icon>settings</mat-icon></button> -->
+    <!-- <br/>
+    <button mat-mini-fab (click)="toggleDebug()"><mat-icon>settings_applications</mat-icon></button> -->
+</div>
+<div class="mapButtons" *ngIf="visibleButtons()">
+    <mat-selection-list>
+        <mat-list-option *ngFor="let layer of overlayLayers; let i=index" (click)="toggleLayer(layer)" [selected]="isVisible(layer)" [title]="getLayerName(layer)">
+            {{getLayerName(layer)}}
+        </mat-list-option>
+    </mat-selection-list>
+    <!-- <mat-selection-list>
+        <mat-list-option (click)="toggleClickAll()" [selected]="isClickAll()" [disabled]="false">
+            Info fra alle kartlag
+        </mat-list-option>
+    </mat-selection-list> -->
+</div>
+<div id="map" class="map" tabindex="0"></div>
+<div id="popup" class="ol-popup">
+    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+    <div id="popup-content"></div>
+</div>

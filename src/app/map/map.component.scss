@@ -1,0 +1,114 @@
+.map {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+.ol-popup {
+    position: absolute;
+    // background-color: white;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    // padding: 15px;
+    padding: 10px 15px 0 15px;
+    border-radius: 10px;
+    // border: 1px solid #cccccc;
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    bottom: 12px;
+    left: -50px;
+    min-width: 280px;
+    // font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.2em;
+}
+.ol-popup:after, .ol-popup:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+.ol-popup:after {
+    // border-top-color: white;
+    border-top-color: rgba(0, 0, 0, 0.8);
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+}
+.ol-popup:before {
+    // border-top-color: #cccccc;
+    border-top-color: rgba(0, 0, 0, 0.8);
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
+}
+.ol-popup-closer {
+    color: #fff;
+    text-decoration: none;
+    position: absolute;
+    top: 2px;
+    right: 8px;
+}
+.ol-popup-closer:after {
+    content: "✖";
+    color: #fff;
+}
+.mapButton{
+    position: absolute;
+    z-index: 999;
+    left: .5em;
+    top: 3em;
+}
+.mapButtonTouch{
+    top: 5em;
+}
+div.mapButtonTouch>button{
+    font-size: 1.5em;
+}
+.mapButtons{
+    position: absolute;
+    // background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(0, 0, 0, 0.8);
+    top: .4em;
+    left: 2.5em;
+    padding: 5px;
+    margin: 5px;
+    z-index: 999;
+    font-size: 1.2em;
+    border-radius: 4px;
+}
+.mapButtonsTouch{
+    left: 3em;
+}
+// section {
+//     display: table;
+// }
+.example-label {
+    display: table-cell;
+    font-size: 14px;
+    margin-left: 8px;
+    min-width: 120px;
+  }
+  
+.button-row {
+    display: table-cell;
+    // width: 490px;
+}
+  
+.button-row .mat-button-base {
+    margin: 8px 8px 8px 0;
+}
+  
+.example-flex-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+  
+.example-button-container {
+    display: flex;
+    justify-content: center;
+    width: 120px;
+}

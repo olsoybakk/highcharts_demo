@@ -2,26 +2,17 @@
 
 $my-palette: mat.$indigo-palette;
 
-.mat-raised-button.mat-button-disabled.mat-button-disabled {
-    background-color: #424242;
-}
-.mat-datepicker-toggle {
+.menuButton {
+    position: absolute;
     color: #ccc;
-}
-.mat-special {
-    width: 1px;
-    font-size: 20px;
-    position: relative;
-    top: 8px;
-}
-.mat-flat-button, .mat-raised-button, .mat-fab, .mat-mini-fab {
-    color: #ccc;
+    left: 0.5em;
+    top: 0.5em;
 }
 
-.mat-form-field-appearance-fill .mat-form-field-flex {
-    background-color: #212121;
+.buttonDark {
+    color: #000;
 }
 
-.highcharts-container {
-    background-color: #212121;
+.buttonLight {
+    color: #ccc;
 }
