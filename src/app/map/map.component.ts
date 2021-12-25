@@ -106,6 +106,23 @@ export class MapComponent implements OnInit {
     // });
     // elspotLayer.set('name', 'ElSpot');
 
+    const parseData = (source: VectorSource<Geometry>, data: any, success: any) => {
+      // console.log('data', data);
+      if (source === undefined) return;
+      const format = source.getFormat();
+      if (format === undefined) return;
+      const features = format.readFeatures(data);
+      features.forEach(f => {
+        // console.log('type', typeof(f));
+        const feature = f as Feature<Geometry>;
+        feature.set('name', this.getElspotAreaName(f.get('ElSpotOmr')));
+        // console.log('feature', feature);
+        // spotSource.addFeature(feature);
+      });
+      source.addFeatures(features as Feature<Geometry>[]);
+      if (success) success(features as Feature<Geometry>[]);
+    }
+
     const spotSource = new VectorSource({
       
       // extent: this.extent,
@@ -120,23 +137,16 @@ export class MapComponent implements OnInit {
                      projection: Projection,
                      success,
                      failure) => {
-        this.mapService.getData('assets/elspot.geojson')
-        .subscribe(data => {
-          // console.log('data', data);
-          if (spotSource === undefined) return;
-          const format = spotSource.getFormat();
-          if (format === undefined) return;
-          const features = format.readFeatures(data);
-          features.forEach(f => {
-            // console.log('type', typeof(f));
-            const feature = f as Feature<Geometry>;
-            feature.set('name', this.getElspotAreaName(f.get('ElSpotOmr')));
-            // console.log('feature', feature);
-            // spotSource.addFeature(feature);
+        const d = localStorage.getItem('elspot_polygon');
+        if (d != undefined) {
+          parseData(spotSource, JSON.parse(d), success);
+        } else {
+          this.mapService.getData('assets/elspot.geojson')
+          .subscribe(data => {
+            localStorage.setItem('elspot_polygon', JSON.stringify(data));
+            parseData(spotSource, data, success);
           });
-          spotSource.addFeatures(features as Feature<Geometry>[]);
-          if (success) success(features as Feature<Geometry>[]);
-        });
+        }
       }
     });
 
@@ -170,7 +180,6 @@ export class MapComponent implements OnInit {
     spotLayer.set('name', 'ElSpot');
 
     this.overlayLayers = [
-      this.createOpencacheLayer({layer: 'europa_forenklet', name: 'Europa forenklet', visible: false}),
       this.createOpencacheLayer({layer: 'egk', name: 'Europa grunnkart', visible: false}),
       this.createOpencacheLayer({layer: 'norges_grunnkart', name: 'Norges grunnkart', visible: false}),
       this.createOpencacheLayer({layer: 'norges_grunnkart_graatone', name: 'Norges grunnkart gråtone', visible: false}),
@@ -298,6 +307,7 @@ export class MapComponent implements OnInit {
     });
 
     this.map.on('singleclick', this.clickMap);
+    this.map.on('pointermove', this.pointermove);
     // this.map.on('moveend', (event: MapEvent) => {
     //   const ext = event.map.getView().calculateExtent(event.map.getSize());
     //   console.log('moveend', event.map.getView().getZoom(), event.map.getView().getCenter(), ext);
@@ -422,6 +432,31 @@ export class MapComponent implements OnInit {
       default:
         return "#ff0000";
       }
+  }
+
+  pointermove = (evt: MapBrowserEvent<any>) => {
+    // console.log('pointermove', evt.coordinate);
+    let html = '';
+    evt.map.forEachFeatureAtPixel(evt.pixel, (feature, layer, geometry) => {
+      html += '<p>';
+      // html += '<span style="font-weight: 500;">';
+      // html += layer.get('name');
+      // html += '</span>'
+      // html += '<br/>';
+      html += `${feature.get('name')}`;
+      html += '</p>';
+      // console.log('click', feature, layer, geometry);
+      // console.log('click', feature.get('name'));
+    });
+    if (this.content) {
+      if (html.length > 0) {
+        // console.log(coordinate);
+        this.content.innerHTML = html;
+        this.overlay.setPosition(evt.coordinate);
+      } else {
+        this.closePopup();
+      }
+    }
   }
 
   clickMap = (evt: MapBrowserEvent<any>) => {
