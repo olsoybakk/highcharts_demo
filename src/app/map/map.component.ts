@@ -307,7 +307,7 @@ export class MapComponent implements OnInit {
     });
 
     this.map.on('singleclick', this.clickMap);
-    this.map.on('pointermove', this.pointermove);
+    // this.map.on('pointermove', this.pointermove);
     // this.map.on('moveend', (event: MapEvent) => {
     //   const ext = event.map.getView().calculateExtent(event.map.getSize());
     //   console.log('moveend', event.map.getView().getZoom(), event.map.getView().getCenter(), ext);
