@@ -28,7 +28,7 @@ export class MapComponent implements OnInit {
   nveSrsCode = 32633;
   map: Map;
   projection: Projection;
-  overlayLayers: Array<Layer<any>>;
+  overlayLayers: Array<Layer<any, any>>;
   attribution: Attribution;
   overlay: Overlay;
   geolocation: Geolocation;
@@ -279,7 +279,7 @@ export class MapComponent implements OnInit {
       }),
     });
 
-    this.overlayLayers.forEach((layer: Layer<any>) => {
+    this.overlayLayers.forEach((layer: Layer<any, any>) => {
       this.map.addLayer(layer);
     });
 
@@ -600,12 +600,12 @@ export class MapComponent implements OnInit {
     this.focusMap();
   }
 
-  toggleLayer = (layer: Layer<any>) => {
+  toggleLayer = (layer: Layer<any, any>) => {
     layer.setVisible(!layer.getVisible());
     this.focusMap();
   }
 
-  isVisible = (layer: Layer<any>) => {
+  isVisible = (layer: Layer<any, any>) => {
     return layer.getVisible();
   }
 
@@ -660,7 +660,7 @@ export class MapComponent implements OnInit {
     return this.showButtons;
   }
 
-  getLayerName = (layer: Layer<any>) => {
+  getLayerName = (layer: Layer<any, any>) => {
     return layer.get('name');
   }
 }
