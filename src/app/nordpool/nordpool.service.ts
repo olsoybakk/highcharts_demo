@@ -76,7 +76,9 @@ export class NordpoolService {
       }
     }
 
-    return {
+    // console.log('options', options);
+
+    const result = {
       current: current,
       values: values,
       minDate: minDate,
@@ -84,5 +86,7 @@ export class NordpoolService {
       options: options,
       ranges: ranges
     };
+    // console.log('result', result);
+    return result;
   }
 }

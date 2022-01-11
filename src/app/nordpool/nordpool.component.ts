@@ -333,6 +333,8 @@ export class NordpoolComponent {
   }
 
   isDisabled(step: number): boolean {
+    // if (step === -1) console.log('step', step);
+    // if (step === -1) console.log('filldate', this.fillDate);
     if (this.fillDate === -1) return true;
     let minDate = this.minDate;
     let maxDate = this.maxDate;
@@ -342,12 +344,15 @@ export class NordpoolComponent {
     if (step > 0) {
       if (maxDate && maxDate.getDate() < validateDate.getDate()) {
         if (maxDate.getMonth() <= validateDate.getMonth())
+          // if (step === -1) console.log('step1\n', maxDate, '\n', validateDate);
           if (maxDate.getMonth() <= validateDate.getMonth()) return true;
       }
     } else {
       if (minDate && minDate.getDate() > validateDate.getDate()) {
         if (minDate.getMonth() >= validateDate.getMonth())
+          // if (step === -1) console.log('step2\n', minDate, '\n', validateDate);
           if (minDate.getFullYear() >= validateDate.getFullYear()) return true;
+          // if (step === -1) console.log('step3\n', minDate.getFullYear() >= validateDate.getFullYear());
       }
     }
     return false;
@@ -414,10 +419,10 @@ export class NordpoolComponent {
     // console.log('seriesExtra', seriesExtra);
 
     const dateValue = minDate?.getDate() === maxDate?.getDate()
-      // ? ` (${this.getDateValueString(minDate, '.')})`
-      ? ` (${this.getDateValueString(maxDate, '.')})`
-      // : ` (${this.getDateValueString(minDate, '.')} - ${this.getDateValueString(maxDate, '.')})`;
-      : ` (${this.getDateValueString(maxDate, '.')})`;
+      ? ` (${this.getDateValueString(minDate, '.')})`
+      // ? ` (${this.getDateValueString(maxDate, '.')})`
+      : ` (${this.getDateValueString(minDate, '.')} - ${this.getDateValueString(maxDate, '.')})`;
+      // : ` (${this.getDateValueString(maxDate, '.')})`;
 
     let options: Highcharts.Options = {
       chart: {
