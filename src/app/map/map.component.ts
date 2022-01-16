@@ -9,8 +9,8 @@ import { Attribution, defaults as defaultControls } from 'ol/control';
 import WMTSTileGrid from 'ol/tilegrid/WMTS';
 import { addProjection, Projection } from 'ol/proj';
 import { getTopLeft, getWidth } from 'ol/extent';
-import { Geometry } from 'ol/geom';
-import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
+import { Circle, Geometry, Point } from 'ol/geom';
+import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
 import * as proj4x from 'proj4';
 import { MapService } from './map.service';
 
@@ -132,11 +132,13 @@ export class MapComponent implements OnInit {
         featureProjection: this.projection,
         geometryName: 'geometry'
       }),
-      loader: async (extent: number[],
-                     resolution: number,
-                     projection: Projection,
-                     success,
-                     failure) => {
+      loader: async (
+        extent: number[],
+        resolution: number,
+        projection: Projection,
+        success: ((arg0: Feature<any>[]) => void) | undefined,
+        failure: (() => void) | undefined
+      ): Promise<void> => {
         const d = localStorage.getItem('elspot_polygon');
         if (d != undefined) {
           parseData(spotSource, JSON.parse(d), success);
@@ -284,6 +286,7 @@ export class MapComponent implements OnInit {
     });
 
     this.geolocation.on('change', () => {
+      // console.log('geolocation', this.geolocation.getAccuracy());
       let position = this.geolocation.getPosition();
       let accuracy = this.geolocation.getAccuracy();
       this.geolocation.setTracking(false);
@@ -298,6 +301,67 @@ export class MapComponent implements OnInit {
         position[0] + 5*accuracy,
         position[1] + 5*accuracy
       ];
+
+      const geolocationStyle = (f: any) => {
+        const feature = f as Feature<Geometry>;
+        const circle = feature.getGeometry() as Circle;
+        if (circle.getRadius !== undefined) {
+          return [
+            new Style({
+              fill: new Fill({
+                color: '#0000FF11',
+              }),
+              stroke: new Stroke({
+                color: '#0000FFAA',
+                width: 2
+              })
+            })
+          ];
+        }
+        return [
+          new Style({
+            image: new CircleStyle({
+              fill: new Fill({
+                color: '#0000FFAA'
+              }),
+              radius: 3
+            })
+          }),
+          new Style({
+            image: new CircleStyle({
+              fill: new Fill({
+                color: '#0000FF77'
+              }),
+              radius: 5
+            })
+          })
+        ];
+      };
+
+      let geolocationSource: VectorSource<Geometry>;
+      const geolocationLayers = this.map.getAllLayers().filter(l => l.get('name') === 'geolocation');
+      if (geolocationLayers.length === 0) {
+        geolocationSource = new VectorSource();
+        const geolocationLayer = new VectorLayer({
+          source: geolocationSource,
+          style: geolocationStyle,
+          zIndex: 9
+        });
+        geolocationLayer.set('name', 'geolocation');
+        this.map.addLayer(geolocationLayer);
+      } else {
+        geolocationSource = geolocationLayers[0].getSource();
+        geolocationSource.clear();
+      }
+      const geolocationPoint = new Feature({
+        geometry: new Point(coordinate)
+      });
+      const geolocationCircle = new Feature({
+        geometry: new Circle(coordinate, accuracy ? accuracy : accuracy)
+      });
+      // geolocationCircle.set('name', `${Math.round(10 * accuracy) / 10} m`);
+      geolocationSource.addFeatures([geolocationPoint, geolocationCircle]);
+
       // console.log(this.geolocation.getPosition(), this.geolocation.getAccuracy());
       const self = this;
       this.map.getView().fit(extent, { duration: this.duration, size: this.map.getSize(), callback: () => {
@@ -463,15 +527,17 @@ export class MapComponent implements OnInit {
     // console.log('clik', evt);
     let html = '';
     evt.map.forEachFeatureAtPixel(evt.pixel, (feature, layer, geometry) => {
-      html += '<p>';
-      // html += '<span style="font-weight: 500;">';
-      // html += layer.get('name');
-      // html += '</span>'
-      // html += '<br/>';
-      html += `${feature.get('name')}`;
-      html += '</p>';
-      // console.log('click', feature, layer, geometry);
-      // console.log('click', feature.get('name'));
+      if (feature.get('name') !== undefined) {
+        html += '<p>';
+        // html += '<span style="font-weight: 500;">';
+        // html += layer.get('name');
+        // html += '</span>'
+        // html += '<br/>';
+        html += `${feature.get('name')}`;
+        html += '</p>';
+        // console.log('click', feature, layer, geometry);
+        // console.log('click', feature.get('name'));
+      }
     });
     if (this.content) {
       if (html.length === 0) {
