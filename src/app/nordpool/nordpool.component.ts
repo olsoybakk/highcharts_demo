@@ -506,8 +506,9 @@ export class NordpoolComponent {
             seriestooltip += `<div style='width: 65px; border: red 1px;'>`;
             // seriestooltip += `<div style='width: 150px;'>`;
             seriestooltip += `<span style='color: ${d.color};'>●</span>`;
-            if (this.colorIndex === d.colorIndex) seriestooltip += `&nbsp;<b>${d.series.name}:</b>&nbsp;`;
-            else seriestooltip += `&nbsp;${d.series.name}:&nbsp;`;
+            seriestooltip += this.colorIndex === d.colorIndex
+              ? `&nbsp;<span style='font-weight: bold; font-size:1.1em;'>${d.series.name}:</span>&nbsp;`
+              : `&nbsp;${d.series.name}:&nbsp;`;
             seriestooltip += '</div>';
             seriestooltip += `<div style='text-align: right; width: 195px; border: red 1px;'>`;
             seriestooltip += `<b>${Highcharts.numberFormat(d.y || 0, 1)} ${self.valueFormat}</b>`;
