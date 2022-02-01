@@ -392,7 +392,7 @@ export class NordpoolComponent {
     const seriesExtra: any[] = [];
     const self = this;
     for (let key in result.values) {
-      let visible = key === 'Tr.heim' || key === 'Oslo' || key === 'Tromsø';
+      let visible = key === 'Tr.heim';// || key === 'Oslo' || key === 'Tromsø';
       if (this.areaState.hasOwnProperty(key)) {
         visible = this.areaState[key];
       } else {
