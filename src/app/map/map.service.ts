@@ -4,23 +4,23 @@ import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 
 export class MapService {
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) { }
 
-  getData(url: string) {
-    // return this.http.get<any>(url, { headers: { mode: 'no-cors', 'Access-Control-Allow-Origin': '*' } }).pipe(
-    return this.http.get<any>(url).pipe(
-      catchError(() => {
-        return of(null);
-      }),
-      map(result => {
-        return result;
-      })
-    );
-  }
+    getData(url: string) {
+        // return this.http.get<any>(url, { headers: { mode: 'no-cors', 'Access-Control-Allow-Origin': '*' } }).pipe(
+        return this.http.get<any>(url).pipe(
+            catchError(() => {
+                return of(null);
+            }),
+            map(result => {
+                return result;
+            })
+        );
+    }
 
 }

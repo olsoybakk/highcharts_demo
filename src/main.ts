@@ -7,13 +7,13 @@ import { environment } from './environments/environment';
 import config from './app/config';
 
 if (environment.production) {
-  enableProdMode();
+    enableProdMode();
 }
 
 platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+    .catch(err => console.error(err));
 
 for (const key in config) {
-  if (!config.hasOwnProperty(key)) continue;
-  console.log(`${key}:\t${(config as any)[key]}`);
+    if (!config.hasOwnProperty(key)) continue;
+    console.log(`${key}:\t${(config as any)[key]}`);
 }

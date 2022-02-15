@@ -19,30 +19,30 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { CustomDateAdapter } from 'src/adapter/custom.date.adapter';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MapComponent,
-    NordpoolComponent
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    MatCommonModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatIconModule,
-    MatListModule,
-    MatDatepickerModule,
-    MatSelectModule,
-    MatInputModule,
-    MatNativeDateModule,
-    HighchartsChartModule
-  ],
-  providers: [{
-    provide: DateAdapter,
-    useClass: CustomDateAdapter
-  }],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        MapComponent,
+        NordpoolComponent
+    ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        MatCommonModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatIconModule,
+        MatListModule,
+        MatDatepickerModule,
+        MatSelectModule,
+        MatInputModule,
+        MatNativeDateModule,
+        HighchartsChartModule
+    ],
+    providers: [{
+        provide: DateAdapter,
+        useClass: CustomDateAdapter
+    }],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,20 +1,20 @@
 <app-map *ngIf="showMap"></app-map>
 <app-nordpool *ngIf="!showMap"></app-nordpool>
 <button mat-icon-button [ngClass]="showMap ? 'buttonDark' : 'buttonLight'" class="menuButton" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-  <!-- <mat-icon>more_vert</mat-icon> -->
-  <mat-icon>menu</mat-icon>
+    <!-- <mat-icon>more_vert</mat-icon> -->
+    <mat-icon>menu</mat-icon>
 </button>
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="showMap = false">
-    <mat-icon>attach_money</mat-icon>
-    <span>Vis spotpriser</span>
-  </button>
-  <button mat-menu-item (click)="showMap = true">
-    <mat-icon>map</mat-icon>
-    <span>Vis kart</span>
-  </button>
-  <button mat-menu-item (click)="reset()">
-    <mat-icon>settings</mat-icon>
-    <span>Nullstill</span>
-  </button>
+    <button mat-menu-item (click)="showMap = false">
+        <mat-icon>attach_money</mat-icon>
+        <span>Vis spotpriser</span>
+    </button>
+    <button mat-menu-item (click)="showMap = true">
+        <mat-icon>map</mat-icon>
+        <span>Vis kart</span>
+    </button>
+    <button mat-menu-item (click)="reset()">
+        <mat-icon>settings</mat-icon>
+        <span>Nullstill</span>
+    </button>
 </mat-menu>
