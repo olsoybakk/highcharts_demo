@@ -15,14 +15,17 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule, DateAdapter } from '@angular/material/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { CustomDateAdapter } from 'src/adapter/custom.date.adapter';
+import { SplashScreenComponent } from './splash-screen/splash-screen.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         MapComponent,
-        NordpoolComponent
+        NordpoolComponent,
+        SplashScreenComponent
     ],
     imports: [
         BrowserModule,
@@ -37,6 +40,7 @@ import { CustomDateAdapter } from 'src/adapter/custom.date.adapter';
         MatSelectModule,
         MatInputModule,
         MatNativeDateModule,
+        MatProgressSpinnerModule,
         HighchartsChartModule
     ],
     providers: [{

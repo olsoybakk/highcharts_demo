@@ -8,6 +8,7 @@ import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { NordpoolService } from './nordpool.service';
 import { INordpoolOptions, INordpoolRange, INordpoolRangeValue } from './nordpool.options';
 import { MatSelectChange } from '@angular/material/select';
+import { SpinnerService } from '../splash-screen/spinner.service';
 
 @Component({
     selector: 'app-nordpool',
@@ -35,7 +36,10 @@ export class NordpoolComponent {
     };
     ranges: INordpoolRange[];
     
-    constructor(nordpoolService: NordpoolService) {
+    constructor(
+        nordpoolService: NordpoolService,
+        private spinnerService: SpinnerService
+    ) {
 
         this.ranges = [{value: {startDate: this.minDate, endDate: this.maxDate}, viewValue: 'Vis Alle'}];
 
@@ -261,6 +265,7 @@ export class NordpoolComponent {
     }
 
     ngOnInit(): void {
+        this.spinnerService.show();
         moment.locale('nb');
         this.datepickerDate = new Date();
         this.fillDate = this.datepickerDate.getDate();
@@ -359,6 +364,9 @@ export class NordpoolComponent {
     }
 
     fillChart(d: any): void {
+        setTimeout(() => {
+            this.spinnerService.hide();
+        }, 2000);
         // console.log('d', typeof d, d.length, d);
         let data = typeof d === 'object' ? d : JSON.parse(d);
         if (typeof d === 'object' && d.result) data = JSON.parse(d.result);
