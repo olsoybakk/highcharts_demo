@@ -35,13 +35,13 @@ export class NordpoolComponent {
         // 'Tromsø': false
     };
     ranges: INordpoolRange[];
-    
+
     constructor(
         nordpoolService: NordpoolService,
         private spinnerService: SpinnerService
     ) {
 
-        this.ranges = [{value: {startDate: this.minDate, endDate: this.maxDate}, viewValue: 'Vis Alle'}];
+        this.ranges = [{ value: { startDate: this.minDate, endDate: this.maxDate }, viewValue: 'Vis Alle' }];
 
         Highcharts.setOptions({
             chart: {
@@ -203,7 +203,7 @@ export class NordpoolComponent {
         },
         series: this.createDummySeries('line')
     };
-    
+
     chartOptionsExtra: Highcharts.Options = {
         title: {
             text: 'Nordpool - henter data...'
@@ -234,12 +234,12 @@ export class NordpoolComponent {
         series: [{
             type: 'column',
             data: [
-                {name: '', x: 1},
-                {name: '', x: 2},
-                {name: '', x: 3},
-                {name: '', x: 4},
-                {name: '', x: 5},
-                {name: '', x: 6}
+                { name: '', x: 1 },
+                { name: '', x: 2 },
+                { name: '', x: 3 },
+                { name: '', x: 4 },
+                { name: '', x: 5 },
+                { name: '', x: 6 }
             ]
         }]
     };
@@ -253,12 +253,12 @@ export class NordpoolComponent {
         // return `${d.getFullYear()}${separator}${this.getStringWithLeadingZero(d.getMonth() + 1)}${separator}${this.getStringWithLeadingZero(d.getDate())}`;
         return moment(d).format('L');
     }
-    
+
     getDateValue(d: Date): number {
         if (!d) return -1;
         return parseInt(`${d.getFullYear()}${d.getMonth() + 1}${d.getDate()}`);
     }
-    
+
     getDateValueWithHour(d: Date, separator: string = ''): number {
         if (!d) return -1;
         return parseInt(`${d.getFullYear()}${separator}${d.getMonth() + 1}${separator}${d.getDate()}${separator}${d.getHours()}`);
@@ -282,7 +282,7 @@ export class NordpoolComponent {
             if (this.getDateValue(storageDateEnddate) <= this.getDateValue(now) + 1) {
                 if (now.getUTCHours() > 10) {
                     // if ((storagetime.getTime() + 30*60*1000) < now.getTime()) {
-                    if ((storagetime.getTime() + 15*60*1000) < now.getTime()) {
+                    if ((storagetime.getTime() + 15 * 60 * 1000) < now.getTime()) {
                         storageData = null;
                     }
                 }
@@ -296,16 +296,16 @@ export class NordpoolComponent {
         const proxyUrl = 'https://proxy20211210131237.azurewebsites.net/proxy/get/?url=';
         const url = 'https://www.nordpoolgroup.com/api/marketdata/chart/23?currency=NOK';
         this.nordpoolService.getData(`${proxyUrl}${encodeURIComponent(url)}`)
-        .subscribe(data => {
-            if (data) {
-                this.fillChart(data);
-            } else {
-                this.nordpoolService.getData('assets/23.json')
-                .subscribe(data => {
-                    if (data) this.fillChart(data);
-                });
-            }
-        });
+            .subscribe(data => {
+                if (data) {
+                    this.fillChart(data);
+                } else {
+                    this.nordpoolService.getData('assets/23.json')
+                        .subscribe(data => {
+                            if (data) this.fillChart(data);
+                        });
+                }
+            });
     }
 
     showall(): void {
@@ -357,7 +357,7 @@ export class NordpoolComponent {
                 if (minDate.getMonth() >= validateDate.getMonth())
                     // if (step === -1) console.log('step2\n', minDate, '\n', validateDate);
                     if (minDate.getFullYear() >= validateDate.getFullYear()) return true;
-                    // if (step === -1) console.log('step3\n', minDate.getFullYear() >= validateDate.getFullYear());
+                // if (step === -1) console.log('step3\n', minDate.getFullYear() >= validateDate.getFullYear());
             }
         }
         return false;
@@ -379,7 +379,7 @@ export class NordpoolComponent {
         // console.log('data', data);
         // console.log(data.data.Rows.forEach((row: any, i: number) => console.log(i,row.Columns)));
         // console.log(this.chartOptions);
-        
+
         const nordpoolOptions: INordpoolOptions = {
             fillDate: this.fillDate,
             minDate: undefined, // this.minDate,
@@ -387,7 +387,7 @@ export class NordpoolComponent {
         };
 
         const result = this.nordpoolService.generateData(data.data.Rows, nordpoolOptions);
-        
+
         this.minDate = result.options.minDate;
         this.maxDate = result.options.maxDate;
         const minDate = result.minDate;
@@ -412,7 +412,7 @@ export class NordpoolComponent {
                 name: key,
                 type: 'line',
                 visible: visible,
-                data: result.values[key].sort((a:any[],b:any[]) => a[0] - b[0]),
+                data: result.values[key].sort((a: any[], b: any[]) => a[0] - b[0]),
                 events: {
                     legendItemClick: () => {
                         //console.log(key, self.areaState[key]);
@@ -430,7 +430,7 @@ export class NordpoolComponent {
             ? ` (${this.getDateValueString(minDate, '.')})`
             // ? ` (${this.getDateValueString(maxDate, '.')})`
             : ` (${this.getDateValueString(minDate, '.')} - ${this.getDateValueString(maxDate, '.')})`;
-            // : ` (${this.getDateValueString(maxDate, '.')})`;
+        // : ` (${this.getDateValueString(maxDate, '.')})`;
 
         let options: Highcharts.Options = {
             chart: {
@@ -456,7 +456,7 @@ export class NordpoolComponent {
                     // dashStyle: 'LongDash',
                     dashStyle: 'LongDash',
                     width: 1,
-                    value: (new Date()).getTime() + 1000*3600
+                    value: (new Date()).getTime() + 1000 * 3600
                 }]
             },
             yAxis: {
@@ -499,33 +499,33 @@ export class NordpoolComponent {
             tooltip: {
                 useHTML: true,
                 formatter: function () {
-                  // console.log(this);
-                  const datas: Highcharts.Point[][] = [];
-                  // this.series.chart.series.forEach(s => datas.push(s.data.filter(e => e.series.visible && `${e.category}` === `${this.key}`)));
-                  this.series.chart.series.forEach(s => datas.push(s.data.filter(e => `${e.category}` === `${this.key}`)));
-                  let tooltip = `<div style='font-size: 10px;'>${moment(this.x - 1000 * 3600).format('LLLL')}</div>`;
-                  // tooltip += `<br/>`;
-                  let seriestooltip = '';
-                  // console.log('datas', datas);
-                  datas.forEach(c => c.forEach(d => {
-                      // if (seriestooltip.length > 0) seriestooltip += '<br/>';
-                      seriestooltip += '<div>';
-                      seriestooltip += `<div style='display: inline-flex; width: 160px;'>`;
-                      seriestooltip += `<div style='width: 65px; border: red 1px;'>`;
-                      // seriestooltip += `<div style='width: 150px;'>`;
-                      seriestooltip += `<span style='color: ${d.color};'>●</span>`;
-                      seriestooltip += this.colorIndex === d.colorIndex
-                          ? `&nbsp;<span style='font-weight: bold; font-size:1.1em;'>${d.series.name}:</span>&nbsp;`
-                          : `&nbsp;${d.series.name}:&nbsp;`;
-                      seriestooltip += '</div>';
-                      seriestooltip += `<div style='text-align: right; width: 195px; border: red 1px;'>`;
-                      seriestooltip += `<b>${Highcharts.numberFormat(d.y || 0, 1)} ${self.valueFormat}</b>`;
-                      seriestooltip += '</div>';
-                      seriestooltip += '</div>';
-                      seriestooltip += '</div>';
-                  }));
-                  tooltip += seriestooltip;
-                  return tooltip;
+                    // console.log(this);
+                    const datas: Highcharts.Point[][] = [];
+                    // this.series.chart.series.forEach(s => datas.push(s.data.filter(e => e.series.visible && `${e.category}` === `${this.key}`)));
+                    this.series.chart.series.forEach(s => datas.push(s.data.filter(e => `${e.category}` === `${this.key}`)));
+                    let tooltip = `<div style='font-size: 10px;'>${moment(this.x - 1000 * 3600).format('LLLL')}</div>`;
+                    // tooltip += `<br/>`;
+                    let seriestooltip = '';
+                    // console.log('datas', datas);
+                    datas.forEach(c => c.forEach(d => {
+                        // if (seriestooltip.length > 0) seriestooltip += '<br/>';
+                        seriestooltip += '<div>';
+                        seriestooltip += `<div style='display: inline-flex; width: 160px;'>`;
+                        seriestooltip += `<div style='width: 65px; border: red 1px;'>`;
+                        // seriestooltip += `<div style='width: 150px;'>`;
+                        seriestooltip += `<span style='color: ${d.color};'>●</span>`;
+                        seriestooltip += this.colorIndex === d.colorIndex
+                            ? `&nbsp;<span style='font-weight: bold; font-size:1.1em;'>${d.series.name}:</span>&nbsp;`
+                            : `&nbsp;${d.series.name}:&nbsp;`;
+                        seriestooltip += '</div>';
+                        seriestooltip += `<div style='text-align: right; width: 195px; border: red 1px;'>`;
+                        seriestooltip += `<b>${Highcharts.numberFormat(d.y || 0, 1)} ${self.valueFormat}</b>`;
+                        seriestooltip += '</div>';
+                        seriestooltip += '</div>';
+                        seriestooltip += '</div>';
+                    }));
+                    tooltip += seriestooltip;
+                    return tooltip;
                 }
             },
             series: series

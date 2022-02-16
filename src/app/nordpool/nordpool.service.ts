@@ -25,7 +25,7 @@ export class NordpoolService {
         );
     }
 
-    generateData(rows: any[], options: INordpoolOptions) : INordpoolResult {
+    generateData(rows: any[], options: INordpoolOptions): INordpoolResult {
         const now = new Date();
         let startTime: Date;
         let minDate: Date = new Date(now.getFullYear() + 1, 1);
@@ -67,12 +67,12 @@ export class NordpoolService {
             }
         });
 
-        const ranges: INordpoolRange[] = [{value: {startDate: minDate, endDate: maxDate}, viewValue: 'Vis Alle'}];
+        const ranges: INordpoolRange[] = [{ value: { startDate: minDate, endDate: maxDate }, viewValue: 'Vis Alle' }];
 
         if (options.minDate && options.maxDate) {
             for (let i = options.minDate.getDate(); i <= options.maxDate.getDate(); i++) {
                 const theDate = new Date(minDate.setDate(i));
-                ranges.push({value: {startDate: theDate, endDate: undefined}, viewValue: moment(theDate).format('L')});
+                ranges.push({ value: { startDate: theDate, endDate: undefined }, viewValue: moment(theDate).format('L') });
             }
         }
 

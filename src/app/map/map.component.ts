@@ -47,7 +47,7 @@ export class MapComponent implements OnInit {
     content = document.getElementById('popup-content');
     closer = document.getElementById('popup-closer');
 
-    constructor(mapService: MapService) { 
+    constructor(mapService: MapService) {
         this.mapService = mapService;
         this.map = new Map({});
         if (proj4.defs(`EPSG:${this.mapEpsgCode}`) === undefined) {
@@ -124,7 +124,7 @@ export class MapComponent implements OnInit {
         }
 
         const spotSource = new VectorSource({
-          
+
             // extent: this.extent,
             // projection: projection,
             format: new GeoJSONFormat({
@@ -144,10 +144,10 @@ export class MapComponent implements OnInit {
                     parseData(spotSource, JSON.parse(d), success);
                 } else {
                     this.mapService.getData('assets/elspot.geojson')
-                    .subscribe(data => {
-                        localStorage.setItem('elspot_polygon', JSON.stringify(data));
-                        parseData(spotSource, data, success);
-                    });
+                        .subscribe(data => {
+                            localStorage.setItem('elspot_polygon', JSON.stringify(data));
+                            parseData(spotSource, data, success);
+                        });
                 }
             }
         });
@@ -182,10 +182,10 @@ export class MapComponent implements OnInit {
         spotLayer.set('name', 'ElSpot');
 
         this.overlayLayers = [
-            this.createOpencacheLayer({layer: 'egk', name: 'Europa grunnkart', visible: false}),
-            this.createOpencacheLayer({layer: 'norges_grunnkart', name: 'Norges grunnkart', visible: false}),
-            this.createOpencacheLayer({layer: 'norges_grunnkart_graatone', name: 'Norges grunnkart gråtone', visible: false}),
-            this.createOpencacheLayer({layer: 'topo4', name: 'Topografisk kart', visible: true}),
+            this.createOpencacheLayer({ layer: 'egk', name: 'Europa grunnkart', visible: false }),
+            this.createOpencacheLayer({ layer: 'norges_grunnkart', name: 'Norges grunnkart', visible: false }),
+            this.createOpencacheLayer({ layer: 'norges_grunnkart_graatone', name: 'Norges grunnkart gråtone', visible: false }),
+            this.createOpencacheLayer({ layer: 'topo4', name: 'Topografisk kart', visible: true }),
             // elspotLayer,
             spotLayer,
         ];
@@ -195,12 +195,12 @@ export class MapComponent implements OnInit {
     wmtsTileGrid = (numZoomLevels: number, matrixSet: string, projection: Projection, startLevel?: number) => {
         let resolutions = new Array(numZoomLevels);
         let matrixIds = new Array(numZoomLevels);
-      
+
         // console.log('wmtsTileGrid()', numZoomLevels, matrixSet, projection);
         let projectionExtent = projection.getExtent();
 
         let size = getWidth(projectionExtent) / 256;
-      
+
         startLevel = startLevel ? startLevel : 0;
         for (let z = startLevel; z < (numZoomLevels + startLevel); ++z) {
             resolutions[z] = size / Math.pow(2, z);
@@ -216,7 +216,7 @@ export class MapComponent implements OnInit {
         return wmtsTileGrid;
     }
 
-    createOpencacheLayer = (options: {layer: string, name: string, visible: boolean}) => {
+    createOpencacheLayer = (options: { layer: string, name: string, visible: boolean }) => {
         const tileLayer = new TileLayer({
             // name: 'Norges grunnkart',
             opacity: 1,
@@ -247,7 +247,7 @@ export class MapComponent implements OnInit {
         // console.log('center', proj4(`EPSG:900913`, `EPSG:${this.mapEpsgCode}`, [1009000, 8414000]));
 
         this.map = new Map({
-            controls: defaultControls({attribution: false, zoom: false}).extend([this.attribution]),
+            controls: defaultControls({ attribution: false, zoom: false }).extend([this.attribution]),
             layers: [
                 // new TileLayer({
                 //   source: new OSM(),
@@ -296,10 +296,10 @@ export class MapComponent implements OnInit {
             position[1] = coordinate[1];
 
             let extent: Extent = [
-                position[0] - 5*accuracy,
-                position[1] - 5*accuracy,
-                position[0] + 5*accuracy,
-                position[1] + 5*accuracy
+                position[0] - 5 * accuracy,
+                position[1] - 5 * accuracy,
+                position[0] + 5 * accuracy,
+                position[1] + 5 * accuracy
             ];
 
             const geolocationStyle = (f: any) => {
@@ -343,9 +343,9 @@ export class MapComponent implements OnInit {
             if (geolocationLayers.length === 0) {
                 geolocationSource = new VectorSource();
                 const geolocationLayer = new VectorLayer({
-                source: geolocationSource,
-                style: geolocationStyle,
-                zIndex: 9
+                    source: geolocationSource,
+                    style: geolocationStyle,
+                    zIndex: 9
                 });
                 geolocationLayer.set('name', 'geolocation');
                 this.map.addLayer(geolocationLayer);
@@ -364,10 +364,12 @@ export class MapComponent implements OnInit {
 
             // console.log(this.geolocation.getPosition(), this.geolocation.getAccuracy());
             const self = this;
-            this.map.getView().fit(extent, { duration: this.duration, size: this.map.getSize(), callback: () => {
-                self.map.getView().animate({ center: position, duration: self.duration });
-                setTimeout(self.focusMap, 10);
-            } });
+            this.map.getView().fit(extent, {
+                duration: this.duration, size: this.map.getSize(), callback: () => {
+                    self.map.getView().animate({ center: position, duration: self.duration });
+                    setTimeout(self.focusMap, 10);
+                }
+            });
         });
 
         this.map.on('singleclick', this.clickMap);
@@ -380,7 +382,7 @@ export class MapComponent implements OnInit {
         this.container = document.getElementById('popup');
         this.content = document.getElementById('popup-content');
         this.closer = document.getElementById('popup-closer');
-      
+
         this.overlay = new Overlay({
             element: this.container ? this.container : undefined,
             autoPan: true,
@@ -402,8 +404,8 @@ export class MapComponent implements OnInit {
         window.addEventListener('orientationchange', (evt: any) => {
             setTimeout(() => {
                 window.scrollTo(0, 0);
-              }, 900);
-              setTimeout(self.checkSize, 1000);
+            }, 900);
+            setTimeout(self.checkSize, 1000);
         });
         setTimeout(this.checkSize, 10);
         setTimeout(this.focusMap, 100);
@@ -518,7 +520,7 @@ export class MapComponent implements OnInit {
                 this.content.innerHTML = html;
                 this.overlay.setPosition(evt.coordinate);
             } else {
-               this.closePopup();
+                this.closePopup();
             }
         }
     }
@@ -528,7 +530,7 @@ export class MapComponent implements OnInit {
         let html = '';
         evt.map.forEachFeatureAtPixel(evt.pixel, (feature, layer, geometry) => {
             if (feature.get('name') !== undefined) {
-               html += '<p>';
+                html += '<p>';
                 // html += '<span style="font-weight: 500;">';
                 // html += layer.get('name');
                 // html += '</span>'
@@ -712,10 +714,10 @@ export class MapComponent implements OnInit {
         this.showButtons = !this.showButtons;
         if (this.touch) {
             setTimeout(() => {
-            const divElement = document.getElementsByClassName('mapButtons');
-            if (divElement && divElement.length > 0){
-                divElement[0].classList.add('mapButtonsTouch');
-            }
+                const divElement = document.getElementsByClassName('mapButtons');
+                if (divElement && divElement.length > 0) {
+                    divElement[0].classList.add('mapButtonsTouch');
+                }
             }, 10);
         }
         this.focusMap();

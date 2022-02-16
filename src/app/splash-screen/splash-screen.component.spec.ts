@@ -8,9 +8,9 @@ describe('SplashScreenComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [ SplashScreenComponent ]
+            declarations: [SplashScreenComponent]
         })
-        .compileComponents();
+            .compileComponents();
     });
 
     beforeEach(() => {

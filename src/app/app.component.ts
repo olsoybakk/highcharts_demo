@@ -11,7 +11,7 @@ export class AppComponent {
     appService: AppService;
     showMap: boolean;
     title: string = 'Highcharts demo';
-  
+
     constructor(
         appService: AppService,
     ) {

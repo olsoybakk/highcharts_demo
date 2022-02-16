@@ -4,7 +4,7 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { SplashScreenComponent } from './splash-screen.component';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class SpinnerService {
 
@@ -14,7 +14,7 @@ export class SpinnerService {
     constructor(private overlay: Overlay) { }
 
     public show(): void {
-        if(!this.overlayRef) {
+        if (!this.overlayRef) {
             this.overlayRef = this.overlay.create();
         }
         // console.log("show spinner");
@@ -23,7 +23,7 @@ export class SpinnerService {
     }
 
     public hide(): void {
-        if(this.overlayRef){
+        if (this.overlayRef) {
             // console.log("hide spinner");
             this.overlayRef.detach();
             delete this.overlayRef;
