@@ -366,7 +366,7 @@ export class NordpoolComponent {
     fillChart(d: any): void {
         setTimeout(() => {
             this.spinnerService.hide();
-        }, 2000);
+        }, 100);
         // console.log('d', typeof d, d.length, d);
         let data = typeof d === 'object' ? d : JSON.parse(d);
         if (typeof d === 'object' && d.result) data = JSON.parse(d.result);
