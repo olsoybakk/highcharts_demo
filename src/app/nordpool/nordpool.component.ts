@@ -44,6 +44,9 @@ export class NordpoolComponent {
         this.ranges = [{ value: { startDate: this.minDate, endDate: this.maxDate }, viewValue: 'Vis Alle' }];
 
         Highcharts.setOptions({
+            lang: {
+                resetZoom: 'Nullstill',
+            },
             chart: {
                 backgroundColor: '#212121',
                 borderColor: '#EEEEEE'
@@ -434,7 +437,7 @@ export class NordpoolComponent {
 
         let options: Highcharts.Options = {
             chart: {
-                // zoomType: 'x',
+                zoomType: 'x',
                 height: Math.round(window.innerHeight * 5 / 8),
                 width: window.innerWidth
             },
