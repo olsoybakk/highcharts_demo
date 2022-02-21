@@ -20,6 +20,11 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "lru-cache",
+              "pbf",
+              "xml-utils/find-tags-by-name"
+            ],
             "outputPath": "dist/highcharts_demo",
             "index": "src/index.html",
             "main": "src/main.ts",
