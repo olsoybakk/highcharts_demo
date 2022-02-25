@@ -13,6 +13,7 @@ import { Circle, Geometry, Point } from 'ol/geom';
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
 import * as proj4x from 'proj4';
 import { MapService } from './map.service';
+import { AppService } from '../app.service';
 
 const proj4 = (proj4x as any).default;
 
@@ -23,7 +24,6 @@ const proj4 = (proj4x as any).default;
 })
 export class MapComponent implements OnInit {
 
-    mapService: MapService;
     duration = 1000;
     nveSrsCode = 32633;
     map: Map;
@@ -47,8 +47,11 @@ export class MapComponent implements OnInit {
     content = document.getElementById('popup-content');
     closer = document.getElementById('popup-closer');
 
-    constructor(mapService: MapService) {
-        this.mapService = mapService;
+    constructor(
+        private appService: AppService,
+        private mapService: MapService
+    ) {
+
         this.map = new Map({});
         if (proj4.defs(`EPSG:${this.mapEpsgCode}`) === undefined) {
             proj4.defs(`EPSG:${this.mapEpsgCode}`, this.mapEpsgDef);
@@ -530,13 +533,16 @@ export class MapComponent implements OnInit {
         let html = '';
         evt.map.forEachFeatureAtPixel(evt.pixel, (feature, layer, geometry) => {
             if (feature.get('name') !== undefined) {
-                html += '<p>';
+                html += '<div>';
                 // html += '<span style="font-weight: 500;">';
                 // html += layer.get('name');
                 // html += '</span>'
                 // html += '<br/>';
-                html += `${feature.get('name')}`;
-                html += '</p>';
+                const name = feature.get('name');
+                html += `${name}`;
+                html += `<div style="font-size: 0.8em;">${this.appService.getCurrPrice(name)}`;
+                html += ` (${this.appService.getAvgPrice(name)}) øre/kWh</div>`;
+                html += '</div>';
                 // console.log('click', feature, layer, geometry);
                 // console.log('click', feature.get('name'));
             }

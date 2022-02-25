@@ -9,6 +9,7 @@ import { NordpoolService } from './nordpool.service';
 import { INordpoolOptions, INordpoolRange, INordpoolRangeValue } from './nordpool.options';
 import { MatSelectChange } from '@angular/material/select';
 import { SpinnerService } from '../splash-screen/spinner.service';
+import { AppService } from '../app.service';
 
 @Component({
     selector: 'app-nordpool',
@@ -23,7 +24,6 @@ export class NordpoolComponent {
     minDate: Date | undefined;
     maxDate: Date | undefined;
     chartData: any;
-    nordpoolService: NordpoolService;
     resizeObservable$: Observable<Event>;
     resizeSubscription$: Subscription;
     areaState: any = {
@@ -37,7 +37,8 @@ export class NordpoolComponent {
     ranges: INordpoolRange[];
 
     constructor(
-        nordpoolService: NordpoolService,
+        private appService: AppService,
+        private nordpoolService: NordpoolService,
         private spinnerService: SpinnerService
     ) {
 
@@ -135,7 +136,6 @@ export class NordpoolComponent {
         // this.minDate = new Date(currentYear - 20, 0, 1);
         // this.maxDate = new Date(currentYear + 1, 11, 31);
 
-        this.nordpoolService = nordpoolService;
         this.resizeObservable$ = fromEvent(window, 'resize')
         this.resizeSubscription$ = this.resizeObservable$.subscribe(() => {
             setTimeout(() => {
@@ -390,6 +390,29 @@ export class NordpoolComponent {
         };
 
         const result = this.nordpoolService.generateData(data.data.Rows, nordpoolOptions);
+        Object.keys(result.current).forEach((name: string) => {
+            // console.log(name, result.current[name]);
+            this.appService.setCurrPrice(name, result.current[name]);
+        });
+
+        // const now = new Date();
+        // const nowTime = (new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours())).getTime() + 1 * 1000 * 3600; // convert to UTC+1;
+        // console.log('now', nowTime);
+        // if (this.minDate && this.maxDate && now > this.minDate && now < this.maxDate) {
+        //     Object.keys(result.values).forEach((name) => {
+        //         const value = result.values[name].filter((x: any) => x[0] === nowTime).map((x: any) => x[1])[0];
+        //         // console.log(name, value);
+        //         if (value) {
+        //             this.appService.setCurrPrice(name, value);
+        //             console.log(name, result.values[name]);
+        //         }
+        //     });
+        // }
+        // Object.keys(result.values).forEach((name: string) => {
+        //     const value = result.values[name].filter((x: any) => x[0] === nowTime).map((x: any) => x[1])[0];
+        //     console.log('her', name, value);
+        // })
+        // console.log('result', result);
 
         this.minDate = result.options.minDate;
         this.maxDate = result.options.maxDate;
@@ -424,7 +447,9 @@ export class NordpoolComponent {
                     }
                 }
             });
-            seriesExtra.push([key, Math.round(100 * result.values[key].reduce((sum: number, x: number[]) => sum + x[1], 0) / result.values[key].length) / 100]);
+            const average =  Math.round(100 * result.values[key].reduce((sum: number, x: number[]) => sum + x[1], 0) / result.values[key].length) / 100;
+            this.appService.setAvgPrice(key, average);
+            seriesExtra.push([key, average]);
         }
         // console.log('series', series);
         // console.log('seriesExtra', seriesExtra);
@@ -433,7 +458,7 @@ export class NordpoolComponent {
             ? ` (${this.getDateValueString(minDate, '.')})`
             // ? ` (${this.getDateValueString(maxDate, '.')})`
             : ` (${this.getDateValueString(minDate, '.')} - ${this.getDateValueString(maxDate, '.')})`;
-        // : ` (${this.getDateValueString(maxDate, '.')})`;
+            // : ` (${this.getDateValueString(maxDate, '.')})`;
 
         let options: Highcharts.Options = {
             chart: {

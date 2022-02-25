@@ -5,9 +5,27 @@ import { Injectable } from '@angular/core';
 })
 export class AppService {
 
+    private avgPrice: any = {};
+    private currPrice: any = {};
+
     constructor() { }
 
-    debug(test: string) {
-        return test;
+    getAvgPrice(name: string): number {
+        return this.avgPrice[name];
     }
+
+    setAvgPrice(name: string, value: number ) {
+        // console.log('average', name, value);
+        this.avgPrice[name] = value;
+    }
+
+    getCurrPrice(name: string): number {
+        return this.currPrice[name];
+    }
+
+    setCurrPrice(name: string, value: number ) {
+        // console.log('current', name, value);
+        this.currPrice[name] = value;
+    }
+
 }
