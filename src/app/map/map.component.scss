@@ -7,14 +7,14 @@
 .ol-popup {
     position: absolute;
     // background-color: white;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.6);
     color: #fff;
     box-shadow: 0 1px 4px rgba(0,0,0,0.2);
     // padding: 15px;
     padding: 10px 15px 10px 15px;
     border-radius: 10px;
     // border: 1px solid #cccccc;
-    border: 1px solid rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.6);
     bottom: 12px;
     left: -50px;
     min-width: 80px;
@@ -33,14 +33,14 @@
 }
 .ol-popup:after {
     // border-top-color: white;
-    border-top-color: rgba(0, 0, 0, 0.8);
+    border-top-color: rgba(0, 0, 0, 0.6);
     border-width: 10px;
     left: 48px;
     margin-left: -10px;
 }
 .ol-popup:before {
     // border-top-color: #cccccc;
-    border-top-color: rgba(0, 0, 0, 0.8);
+    border-top-color: rgba(0, 0, 0, 0.6);
     border-width: 11px;
     left: 48px;
     margin-left: -11px;
@@ -71,7 +71,7 @@ div.mapButtonTouch>button{
 .mapButtons{
     position: absolute;
     // background-color: rgba(255, 255, 255, 0.9);
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.6);
     top: .4em;
     left: 2.5em;
     padding: 5px;
