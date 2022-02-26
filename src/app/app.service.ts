@@ -25,7 +25,9 @@ export class AppService {
 
     setCurrPrice(name: string, value: number ) {
         // console.log('current', name, value);
-        this.currPrice[name] = value;
+        if (value > 0) {
+            this.currPrice[name] = value;
+        }
     }
 
 }
