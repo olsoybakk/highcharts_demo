@@ -540,8 +540,11 @@ export class MapComponent implements OnInit {
                 // html += '<br/>';
                 const name = feature.get('name');
                 html += `${name}`;
-                html += `<div style="font-size: 0.8em;">${this.appService.getCurrPrice(name)}`;
-                html += ` (${this.appService.getAvgPrice(name)}) øre/kWh</div>`;
+                const currentValue = this.appService.getCurrPrice(name);
+                if (currentValue > 0) {
+                    html += `<div style="font-size: 0.8em;">${this.appService.getCurrPrice(name)} øre/kWh (nå)</div>`;
+                }
+                html += `<div style="font-size: 0.7em;">${this.appService.getAvgPrice(name)} øre/kWh (snitt)</div>`;
                 html += '</div>';
                 // console.log('click', feature, layer, geometry);
                 // console.log('click', feature.get('name'));
