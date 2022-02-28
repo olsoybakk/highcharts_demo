@@ -353,7 +353,7 @@ export class MapComponent implements OnInit {
                 geolocationLayer.set('name', 'geolocation');
                 this.map.addLayer(geolocationLayer);
             } else {
-                geolocationSource = geolocationLayers[0].getSource();
+                geolocationSource = geolocationLayers[0].getSource() as VectorSource<Geometry>;
                 geolocationSource.clear();
             }
             const geolocationPoint = new Feature({
