@@ -531,7 +531,8 @@ export class NordpoolComponent {
                     const datas: Highcharts.Point[][] = [];
                     // this.series.chart.series.forEach(s => datas.push(s.data.filter(e => e.series.visible && `${e.category}` === `${this.key}`)));
                     this.series.chart.series.forEach(s => datas.push(s.data.filter(e => `${e.category}` === `${this.key}`)));
-                    let tooltip = `<div style='font-size: 10px;'>${moment(this.x - 1000 * 3600).format('LLLL')}</div>`;
+                    let xValue = this.x as number;
+                    let tooltip = `<div style='font-size: 10px;'>${moment(xValue - 1000 * 3600).format('LLLL')}</div>`;
                     // tooltip += `<br/>`;
                     let seriestooltip = '';
                     // console.log('datas', datas);
