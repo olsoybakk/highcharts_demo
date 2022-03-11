@@ -23,7 +23,7 @@
             "allowedCommonJsDependencies": [
               "lru-cache",
               "pbf",
-              "xml-utils/find-tags-by-name"
+              "xml-utils/find-tags-by-name.js"
             ],
             "outputPath": "dist/highcharts_demo",
             "index": "src/index.html",
