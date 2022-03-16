@@ -1,6 +1,6 @@
 const config = {
-    'buildDate': '2022.03.11',
-    'buildTime': '23:10',
+    'buildDate': '2022.03.16',
+    'buildTime': '21:40',
     // 'elspotUrl': 'https://nve.geodataonline.no/arcgis/rest/services/Mapservices/Elspot/MapServer',
     // 'elspotLayer': '0'
 };
