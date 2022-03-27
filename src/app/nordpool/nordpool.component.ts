@@ -451,6 +451,10 @@ export class NordpoolComponent {
             this.appService.setAvgPrice(key, average);
             seriesExtra.push([key, average]);
         }
+        if (series.length === 0) {
+            this.appService.reset();
+            return;
+        }
         // console.log('series', series);
         // console.log('seriesExtra', seriesExtra);
 
