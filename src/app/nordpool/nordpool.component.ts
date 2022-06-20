@@ -45,6 +45,9 @@ export class NordpoolComponent {
         this.ranges = [{ value: { startDate: this.minDate, endDate: this.maxDate }, viewValue: 'Vis Alle' }];
 
         Highcharts.setOptions({
+            accessibility: {
+                enabled: false
+            },
             lang: {
                 resetZoom: 'Nullstill',
             },
